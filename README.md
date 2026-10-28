@@ -22,7 +22,7 @@ Isi website: 5 modul materi, simulasi (Canvas ERD, normalisasi, SQL Editor Sandb
 | Editor SQL | CodeMirror atau Monaco (belum dipasang) |
 | Laporan PDF | jsPDF atau html2pdf.js (belum dipasang) |
 
-Tidak ada server database dan tidak ada login. Semua berjalan di sisi browser.
+Tidak ada server database. Semua berjalan di sisi browser, termasuk login (login lokal: nama dan kelas disimpan di browser, belum ada password) dan progres belajar.
 
 ---
 
@@ -49,20 +49,94 @@ Kalau `npm install` gagal dengan error `ERESOLVE`, kabari tim. Jangan langsung m
 
 ```
 src/
-├── components/   # komponen yang dipakai di banyak halaman (Navbar, Footer, kartu, tombol)
-├── pages/        # satu file per halaman (Beranda, Modul, Simulasi, Kuis, Rekap)
+├── components/   # komponen yang dipakai di banyak halaman (Navbar, Footer, ModulCard, FaseCard, VideoPlayer, ...)
+├── context/      # akun siswa: auth.ts, AuthProvider.tsx, useAuth.ts (login lokal)
+├── data/
+│   ├── modul.ts  # daftar modul untuk Beranda dan Daftar Modul (judul, kode, JP, deskripsi singkat)
+│   └── materi/   # ISI SETIAP MODUL (tempat pembuat konten bekerja)
+│       ├── types.ts      # format data (jangan diubah sendiri)
+│       ├── modul-01.ts   # contoh lengkap, dipakai sebagai acuan
+│       ├── modul-05.ts   # kerangka halaman modul (materi belum diisi)
+│       └── index.ts      # pendaftaran semua modul
+├── lib/          # fungsi bantu, misalnya progres.ts (progres belajar di browser)
+├── pages/        # satu file per halaman
 ├── assets/       # gambar, ikon, ilustrasi (wajib ringan)
-├── data/         # isi materi, bank soal kuis, dataset SQL (file .ts / .json)
 ├── App.tsx       # daftar route
 ├── main.tsx
 └── index.css     # palet warna dan font (file bersama, lihat aturan di bawah)
 ```
 
-Rute halaman: `/` Beranda, `/modul`, `/simulasi`, `/kuis`, `/rekap`.
+### Halaman yang sudah ada
+
+| Alamat | Halaman | Status |
+| --- | --- | --- |
+| `/` | Beranda | Selesai |
+| `/masuk` | Masuk (nama dan kelas, login lokal) | Selesai |
+| `/modul` | Daftar Modul | Selesai |
+| `/modul/:id` | Halaman Modul (3 fase + peta kompetensi) | Selesai |
+| `/modul/:id/materi` | Materi Fase 1 | Selesai |
+| `/simulasi`, `/simulasi/:id` | Simulasi Lab / SQL Editor | Placeholder |
+| `/kuis`, `/kuis/:id` | Kuis dan Challenge | Placeholder |
+| `/rekap` | Rekap Hasil | Placeholder |
+
+`:id` adalah kode modul, misalnya `mod-01` sampai `mod-05`.
 
 ---
 
-## 4. Alur Kerja Git (WAJIB DIIKUTI)
+## 4. Cara Menambah Isi Modul (untuk pembuat konten)
+
+Isi setiap modul disimpan sebagai **data**, terpisah dari tampilan. Jadi untuk mengisi konten, **cukup edit file di `src/data/`**. Tidak perlu menyentuh komponen atau halaman.
+
+### Langkah-langkah
+
+1. Ambil versi terbaru dan buat branch sendiri:
+   ```bash
+   git checkout main
+   git pull
+   git checkout -b konten/modul-2
+   ```
+2. Salin `src/data/materi/modul-01.ts` menjadi `modul-02.ts` (sesuaikan nomornya).
+3. Di file baru, ubah `id` menjadi `'mod-02'` dan ubah nama variabel menjadi `modul02`. Lalu isi semua teksnya: judul, deskripsi, tiga fase, peta kompetensi, dan `materi`.
+4. Daftarkan di `src/data/materi/index.ts`:
+   ```ts
+   import { modul02 } from './modul-02'
+
+   export const detailModul: Record<string, ModulDetail | undefined> = {
+     [modul01.id]: modul01,
+     [modul02.id]: modul02,
+     // ...
+   }
+   ```
+5. Cek di browser: `/modul/mod-02` dan `/modul/mod-02/materi`.
+6. Jalankan `npm run build` dan `npm run lint`, lalu commit, push, dan buat Pull Request.
+
+### Isi penting di dalam file modul
+
+| Bagian | Fungsi |
+| --- | --- |
+| `fase1`, `fase2`, `fase3` | Teks tiga kartu di halaman modul (judul, deskripsi, daftar centang) |
+| `fase3.tingkat` dan `fase3.kkm` | Tingkat kesulitan dan nilai minimum lulus |
+| `peta` | Peta kompetensi di bagian bawah halaman modul. `rumus` boleh dikosongkan |
+| `materi` | Isi halaman Materi Fase 1. **Boleh dikosongkan dulu**, nanti tampil "Materi sedang disiapkan" |
+| `materi.video.youtubeId` | Kode video YouTube. Kosongkan kalau belum ada (tampil placeholder) |
+| `materi.video.slidePdf` | Opsional. Taruh PDF di folder `public/`, lalu isi `'/nama-file.pdf'` |
+| `materi.perbandingan` | Opsional. Hapus bagian ini kalau tidak dibutuhkan |
+| `materi.cek.benar` | Nomor pilihan jawaban yang benar, **mulai dari 0** (pilihan pertama = 0) |
+
+### Mengubah teks yang sudah ada
+
+- Teks kartu di Beranda dan Daftar Modul: edit `src/data/modul.ts`.
+- Teks halaman modul dan materi: edit file `modul-0X.ts` yang sesuai.
+- Jangan mengubah `src/data/materi/types.ts` sendiri. Kalau butuh kolom atau jenis konten baru, minta ditambahkan lewat grup.
+
+### Bagian yang dikerjakan lewat file halaman (bukan data)
+
+- **Simulasi Lab (`/simulasi/:id`) dan SQL Editor:** buat file baru di `src/pages/`, lalu ganti route placeholder di `App.tsx` (kabari tim karena `App.tsx` file bersama).
+- **Kuis, Challenge, dan Rekap:** format bank soal dan halamannya menyusul. Tunggu kabar dari Ahmad sebelum mulai.
+
+---
+
+## 5. Alur Kerja Git (WAJIB DIIKUTI)
 
 Kita bekerja berempat di repo yang sama. Supaya tidak saling menimpa pekerjaan, ikuti alur ini.
 
@@ -102,7 +176,7 @@ Tulis jelas dan pakai kata kerja di depan. Contoh:
 
 ---
 
-## 5. Yang HARUS Dilakukan
+## 6. Yang HARUS Dilakukan
 
 - **Selalu `git pull` dari `main` sebelum mulai kerja**, dan sebelum membuka pull request.
 - **Kerja di branch sendiri**, bukan langsung di `main`.
@@ -133,7 +207,7 @@ Tulis jelas dan pakai kata kerja di depan. Contoh:
 
 ---
 
-## 6. Yang JANGAN Dilakukan
+## 7. Yang JANGAN Dilakukan
 
 - **Jangan push langsung ke `main`.** Semua lewat branch dan pull request.
 - **Jangan `git push --force`.** Ini bisa menghapus pekerjaan teman.
@@ -142,6 +216,7 @@ Tulis jelas dan pakai kata kerja di depan. Contoh:
 - **Jangan pakai `npm install --force` atau `--legacy-peer-deps`** sebagai jalan pintas, dan jangan upgrade TypeScript.
 - **Jangan edit `package-lock.json` secara manual.**
 - **Jangan ubah file bersama tanpa memberi kabar:** `src/index.css`, `App.tsx`, `Layout.tsx`, `vite.config.ts`, `package.json`. Perubahan di sini memengaruhi semua orang.
+- **Jangan ubah `src/data/materi/types.ts`, komponen, atau halaman saat mengisi konten.** Cukup edit file data. Perlu perubahan format? Minta lewat grup.
 - **Jangan pakai warna, font, atau gaya di luar atribut desain proposal.** Konsistensi tampilan adalah bagian dari penilaian.
 - **Jangan taruh gambar atau video besar di `assets/`.** Kompres dulu. Untuk video penjelasan, pakai tautan (misalnya YouTube) dan jangan simpan file videonya di repo.
 - **Jangan menulis CSS terpisah** kalau bisa memakai kelas Tailwind.
@@ -151,9 +226,9 @@ Tulis jelas dan pakai kata kerja di depan. Contoh:
 
 ---
 
-## 7. Pembagian Tugas
+## 8. Pembagian Tugas
 
-Mengikuti jadwal pada Proposal Tabel 3.3 (Tahap Development dan seterusnya). Kalau ada perubahan, perbarui tabel ini lewat pull request.
+Mengikuti jadwal pada Proposal Tabel 3.3 (Tahap Development dan seterusnya). Pembuat konten mengikuti bagian 4 di atas. Kalau ada perubahan, perbarui tabel ini lewat pull request.
 
 | Bagian | Penanggung jawab |
 | --- | --- |
@@ -166,7 +241,7 @@ Jadwal singkat: Development 19 Okt sampai 1 Nov 2026, Black Box Testing 2 sampai
 
 ---
 
-## 8. Kalau Ada Masalah
+## 9. Kalau Ada Masalah
 
 | Masalah | Cara mengatasi |
 | --- | --- |
@@ -178,7 +253,7 @@ Jadwal singkat: Development 19 Okt sampai 1 Nov 2026, Black Box Testing 2 sampai
 
 ---
 
-## 9. Daftar Periksa Sebelum Membuka Pull Request
+## 10. Daftar Periksa Sebelum Membuka Pull Request
 
 - [ ] Sudah `git pull` dari `main` dan tidak ada konflik
 - [ ] `npm run build` dan `npm run lint` berhasil
@@ -186,8 +261,3 @@ Jadwal singkat: Development 19 Okt sampai 1 Nov 2026, Black Box Testing 2 sampai
 - [ ] Warna dan font sesuai atribut desain
 - [ ] Tidak ada `console.log`, kode sisa, atau file yang tidak perlu
 - [ ] Deskripsi pull request menjelaskan apa yang berubah
-
-## 10. Cara tambah data atau edit data materi.
-- Salin src/data/materi/modul-01.ts menjadi modul-02.ts (dst.), lalu ubah isinya.
-- Daftarkan di src/data/materi/index.ts.
-- Isi youtubeId dengan kode video YouTube. Kalau ada PDF rangkuman, taruh di public/ dan isi slidePdf.
