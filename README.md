@@ -186,3 +186,8 @@ Jadwal singkat: Development 19 Okt sampai 1 Nov 2026, Black Box Testing 2 sampai
 - [ ] Warna dan font sesuai atribut desain
 - [ ] Tidak ada `console.log`, kode sisa, atau file yang tidak perlu
 - [ ] Deskripsi pull request menjelaskan apa yang berubah
+
+## 10. Cara tambah data atau edit data materi.
+- Salin src/data/materi/modul-01.ts menjadi modul-02.ts (dst.), lalu ubah isinya.
+- Daftarkan di src/data/materi/index.ts.
+- Isi youtubeId dengan kode video YouTube. Kalau ada PDF rangkuman, taruh di public/ dan isi slidePdf.
