@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Database, Menu, X } from 'lucide-react'
+import AkunMenu from './AkunMenu'
 
 const menu = [
   { to: '/', label: 'Beranda' },
@@ -39,13 +40,16 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <button
-          className="rounded-lg p-2 hover:bg-slate-100 md:hidden"
-          onClick={() => setOpen(!open)}
-          aria-label="Buka menu"
-        >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        <div className="flex items-center gap-2">
+  <AkunMenu />
+  <button
+    className="rounded-lg p-2 hover:bg-slate-100 md:hidden"
+    onClick={() => setOpen(!open)}
+    aria-label="Buka menu"
+  >
+    {open ? <X size={22} /> : <Menu size={22} />}
+  </button>
+</div>
       </div>
 
       {open && (
