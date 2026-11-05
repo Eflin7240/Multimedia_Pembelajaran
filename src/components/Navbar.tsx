@@ -7,7 +7,7 @@ const menu = [
   { to: '/', label: 'Beranda' },
   { to: '/modul', label: 'Modul' },
   { to: '/simulasi', label: 'Simulasi Lab' },
-  { to: '/kuis', label: 'Kuis' },
+  { to: '/kuis', label: 'Tantangan' },
   { to: '/rekap', label: 'Rekap Hasil' },
 ]
 
