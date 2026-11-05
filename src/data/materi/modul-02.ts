@@ -58,7 +58,7 @@ export const modul02: ModulDetail = {
         {
           id: 'tool-laragon',
           nama: 'Laragon (Environment Server)',
-          logo: 'https://raw.githubusercontent.com/leokhoa/laragon/master/laragon.png',
+          logo: 'https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/laragon.svg',
           deskripsi: 'Lingkungan web server lokal modern dan universal yang menjalankan MySQL/MariaDB daemon, Apache/Nginx, dan PHP dalam satu paket otomatis.',
           caraKerja: [
             '1. Pengguna membuka Laragon lalu menekan tombol "Start All".',
