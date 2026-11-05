@@ -25,6 +25,7 @@ export type Materi = {
   estimasiMenit: number
   video: { youtubeId: string; durasi: string; slidePdf?: string }
   intisari: { judul: string; isi: string; analogi?: { judul: string; isi: string } }
+  toolsInteraktif?: ToolsInteraktif // opsional, hanya untuk modul 2 dan modul lanjutan
   perbandingan?: { judul: string; tag?: string; pengantar: string; kiri: Sisi; kanan: Sisi }
   poin: { judul: string; daftar: { judul: string; isi: string }[] }
   cek: SoalCek
@@ -42,4 +43,22 @@ export type ModulDetail = {
     poin: { judul: string; isi: string; rumus?: string }[]
   }
   materi?: Materi // boleh kosong dulu; halaman materi akan menampilkan "sedang disiapkan"
+}
+
+// =============================================================
+// TAMBAHAN UNTUK TOOLS INTERAKTIF (KHUSUS MODUL 2 & LANJUTAN)
+// =============================================================
+
+export type ToolItem = {
+  id: string
+  nama: string
+  logo?: string
+  deskripsi: string
+  caraKerja: string[]
+}
+
+export type ToolsInteraktif = {
+  judul: string
+  deskripsi: string
+  daftar: ToolItem[]
 }
