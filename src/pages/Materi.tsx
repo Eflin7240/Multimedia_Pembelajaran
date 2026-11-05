@@ -135,12 +135,12 @@ export default function Materi() {
             <section className="rounded-2xl border border-slate-200 bg-slate-900 p-6 text-white shadow-sm">
               <div className="max-w-2xl">
                 <p className="text-xs font-bold tracking-wide text-blue-400">FITUR EKSPLORASI INTERAKTIF</p>
-                <h2 className="mt-1 text-2xl font-extrabold">{materi.toolsInteraktif.judul}</h2>
-                <p className="mt-1 text-sm text-slate-400">{materi.toolsInteraktif.deskripsi}</p>
+                <h2 className="mt-1 text-xl font-extrabold">{materi.toolsInteraktif.judul}</h2>
+                <p className="mt-1 text-xs text-slate-400">{materi.toolsInteraktif.deskripsi}</p>
               </div>
 
               {/* Grid Tombol Tools Bergambar */}
-              <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {materi.toolsInteraktif.daftar.map((tool: any) => {
                   const isSelected = activeTool?.id === tool.id
                   return (
@@ -154,10 +154,15 @@ export default function Materi() {
                           : 'border-slate-800 bg-slate-800/60 text-slate-300 hover:border-slate-700 hover:bg-slate-800'
                       }`}
                     >
-                      {tool.logo && (
-                        <img src={tool.logo} alt={tool.nama} className="mb-3 h-10 w-10 object-contain rounded" />
-                      )}
-                      <span className="text-xs font-bold leading-tight">{tool.nama}</span>
+                      {/* Wadah Putih Terang Tempat Logo */}
+                      <div className="mb-2.5 flex h-14 w-14 items-center justify-center rounded-xl bg-white p-2 shadow-sm">
+                        {tool.logo ? (
+                          <img src={tool.logo} alt={tool.nama} className="h-10 w-10 object-contain" />
+                        ) : (
+                          <span className="text-xs font-bold text-slate-800">TOOL</span>
+                        )}
+                      </div>
+                      <span className="text-xs font-semibold leading-tight">{tool.nama}</span>
                     </button>
                   )
                 })}
