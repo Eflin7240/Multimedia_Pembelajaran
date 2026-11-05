@@ -71,7 +71,8 @@ export function buatSql(erd: Erd): string {
 
 export type Aturan = { id: string; teks: string; uji: (erd: Erd) => boolean }
 
-const cocok = (nama: string, kata: string) => namaSql(nama).includes(kata.toLowerCase())
+const cocok = (nama: string, kata: string) =>
+  kata.split('|').some((k) => namaSql(nama).includes(k.trim().toLowerCase()))
 
 // Ada tabel yang namanya memuat setiap kata kunci. Contoh: adaTabel(['anggota', 'buku'])
 export const adaTabel = (kata: string[], teks = `Ada tabel ${kata.join(', ')}`): Aturan => ({
@@ -115,6 +116,55 @@ export const fkLengkap = (teks = 'Setiap relasi 1:N punya Foreign Key di sisi N'
       satuN.every((r) => e.entitas.find((t) => t.id === r.ke)?.atribut.some((a) => a.fk === r.dari) ?? false)
     )
   },
+})
+
+// Tabel `anak` punya atribut Foreign Key yang merujuk ke tabel `induk`
+export const adaFk = (
+  anak: string,
+  induk: string,
+  teks = `Tabel ${anak} punya Foreign Key ke ${induk}`,
+): Aturan => ({
+  id: `fk-${anak}-${induk}`,
+  teks,
+  uji: (e) =>
+    e.entitas
+      .filter((t) => cocok(t.nama, anak))
+      .some((t) =>
+        t.atribut.some((a) => {
+          const rujuk = e.entitas.find((x) => x.id === a.fk)
+          return !!rujuk && cocok(rujuk.nama, induk)
+        }),
+      ),
+})
+
+// Ada relasi antara dua tabel dengan kardinalitas tertentu (arah tidak dipermasalahkan)
+export const relasiKardinalitas = (
+  a: string,
+  b: string,
+  k: Kardinalitas,
+  teks = `Relasi ${a} dan ${b} bertipe ${k}`,
+): Aturan => ({
+  id: `kard-${a}-${b}-${k}`,
+  teks,
+  uji: (e) =>
+    e.relasi.some((r) => {
+      const x = e.entitas.find((t) => t.id === r.dari)
+      const y = e.entitas.find((t) => t.id === r.ke)
+      if (!x || !y || r.kardinalitas !== k) return false
+      return (cocok(x.nama, a) && cocok(y.nama, b)) || (cocok(x.nama, b) && cocok(y.nama, a))
+    }),
+})
+
+// Salah satu tabel `tabel` punya atribut yang namanya memuat `atribut`
+export const adaAtribut = (
+  tabel: string,
+  atribut: string,
+  teks = `Tabel ${tabel} punya atribut ${atribut}`,
+): Aturan => ({
+  id: `atribut-${tabel}-${atribut}`,
+  teks,
+  uji: (e) =>
+    e.entitas.filter((t) => cocok(t.nama, tabel)).some((t) => t.atribut.some((a) => cocok(a.nama, atribut))),
 })
 
 export const periksa = (erd: Erd, aturan: Aturan[]) => aturan.map((a) => ({ ...a, ok: a.uji(erd) }))

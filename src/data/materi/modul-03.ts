@@ -21,7 +21,7 @@ export const modul03: ModulDetail = {
   fase3: {
     judul: 'Challenge Merancang ERD Sistem',
     deskripsi:
-      'Uji logika analisis sistem dengan merancang skema ERD untuk kasus Perpustakaan Sekolah dan Transaksi Penjualan Minimarket.',
+      'Uji pemahaman konsep ERD melalui 7 soal pilihan ganda dan 3 soal merancang ERD langsung di kanvas.',
     checklist: [],
     tingkat: 'Tingkat Menengah (L2)',
     kkm: 75,

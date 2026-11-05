@@ -8,6 +8,7 @@ import Materi from './pages/Materi'
 import Simulasi from './pages/Simulasi'
 import Kuis from './pages/Kuis'
 import RekapHasilPage from './RekapHasilPage'
+import Challenge from './pages/Challenge'
 
 export default function App() {
   return (
@@ -24,7 +25,7 @@ export default function App() {
         <Route path="/simulasi/:id" element={<Simulasi />} />
 
         <Route path="/kuis" element={<Kuis />} />
-        <Route path="/kuis/:id" element={<Kuis />} />
+        <Route path="/challenge/:id" element={<Challenge />} />
 
         <Route path="/rekap" element={<RekapHasilPage />} />
       </Route>
