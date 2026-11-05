@@ -19,7 +19,7 @@ export default function App() {
         <Route path="/modul/:id" element={<ModulHub />} />
         <Route path="/modul/:id/materi" element={<Materi />} />
 
-        <Route path="/simulasi" element={<Placeholder judul="Simulasi Lab" />} />
+        <Route path="/simulasi" element={<Simulasi />} />
         <Route path="/simulasi/:id" element={<Simulasi />} />
 
         <Route path="/kuis" element={<Placeholder judul="Kuis Studi Kasus" />} />
