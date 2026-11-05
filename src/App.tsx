@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
-import Placeholder from './pages/Placeholder'
 import Beranda from './pages/Beranda'
 import Masuk from './pages/Masuk'
 import DaftarModul from './pages/DaftarModul'
@@ -8,6 +7,7 @@ import ModulHub from './pages/ModulHub'
 import Materi from './pages/Materi'
 import Simulasi from './pages/Simulasi'
 import Kuis from './pages/Kuis'
+import RekapHasilPage from './RekapHasilPage'
 import Challenge from './pages/Challenge'
 
 export default function App() {
@@ -27,7 +27,7 @@ export default function App() {
         <Route path="/kuis" element={<Kuis />} />
         <Route path="/challenge/:id" element={<Challenge />} />
 
-        <Route path="/rekap" element={<Placeholder judul="Rekap Hasil" />} />
+        <Route path="/rekap" element={<RekapHasilPage />} />
       </Route>
     </Routes>
   )
