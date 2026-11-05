@@ -1,4 +1,18 @@
-import { BadgeCheck, BookOpen, Clock, Cpu, Download, SquareTerminal, Star } from 'lucide-react'
+import { useState } from 'react'
+import {
+  BadgeCheck,
+  BookOpen,
+  Clock,
+  Cpu,
+  Download,
+  SquareTerminal,
+  Star,
+  FileText,
+  CheckCircle,
+  HelpCircle,
+  Trophy,
+  X,
+} from 'lucide-react'
 import StatCard from '../components/StatCard'
 import ModulCard from '../components/ModulCard'
 import { daftarModul } from '../data/modul'
@@ -7,6 +21,10 @@ const jumlahModul = daftarModul.filter((m) => m.jenis === 'modul').length
 const totalJP = daftarModul.reduce((total, m) => total + (m.jp ?? 0), 0)
 
 export default function Beranda() {
+  const [activeModal, setActiveModal] = useState<
+    'panduan' | 'template' | 'penilaian' | 'tantangan' | null
+  >(null)
+  
   return (
     <div className="space-y-8">
       {/* Hero */}
@@ -66,35 +84,299 @@ export default function Beranda() {
         </div>
       </section>
 
-      {/* Banner panduan */}
-      <section className="flex flex-col gap-4 rounded-2xl bg-primary/5 p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-4">
-          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-            <SquareTerminal size={20} />
-          </div>
-          <div>
-            <p className="flex flex-wrap items-center gap-2 font-bold">
-              Panduan Siswa & Standar Penilaian
-              <span className="rounded-md bg-green-100 px-2 py-0.5 text-xs font-semibold text-success">
-                Tanpa Instal
-              </span>
-            </p>
-            <p className="mt-1 text-sm text-slate-600">
-              Praktik query SQL berjalan langsung di browser, jadi tidak perlu memasang MySQL atau
-              server apa pun. Konsultasikan kendala dengan guru pembimbing.
-            </p>
-          </div>
+      {/* Section Tombol Pemicu Modal/Popup (4 Tombol) */}
+      <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-5 shadow-sm sm:p-6">
+        <div className="mb-4">
+          <h3 className="text-lg font-bold text-slate-900">Dokumen & Panduan Praktikum</h3>
+          <p className="text-xs text-slate-500">
+            Pilih dokumen di bawah ini untuk melihat pratinjau detail serta mengunduh berkas PDF.
+          </p>
         </div>
 
-        <a
-          href="/silabus.pdf"
-          download
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-slate-50"
-        >
-          <Download size={16} />
-          Unduh Silabus (.PDF)
-        </a>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => setActiveModal('panduan')}
+            className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-primary hover:text-primary hover:shadow"
+          >
+            <HelpCircle size={18} className="text-primary" />
+            Silabus & Panduan
+          </button>
+
+          <button
+            onClick={() => setActiveModal('template')}
+            className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-primary hover:text-primary hover:shadow"
+          >
+            <FileText size={18} className="text-primary" />
+            Template Praktikum
+          </button>
+
+          <button
+            onClick={() => setActiveModal('penilaian')}
+            className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-primary hover:text-primary hover:shadow"
+          >
+            <CheckCircle size={18} className="text-primary" />
+            Standar Penilaian
+          </button>
+
+          <button
+            onClick={() => setActiveModal('tantangan')}
+            className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-primary hover:text-primary hover:shadow"
+          >
+            <Trophy size={18} className="text-amber-500" />
+            Akses Tantangan Studi Kasus
+          </button>
+        </div>
       </section>
+
+      {/* ==================== POPUP / MODAL ==================== */}
+      {activeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl transition-all">
+            {/* Tombol Close (X) */}
+            <button
+              onClick={() => setActiveModal(null)}
+              className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            >
+              <X size={20} />
+            </button>
+
+            {/* POPUP 1: SILABUS & PANDUAN */}
+            {activeModal === 'panduan' && (
+              <div className="space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <HelpCircle size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900">Silabus & Panduan Siswa</h3>
+                    <p className="text-xs text-slate-500">Mata Pelajaran Basis Data Kelas XI</p>
+                  </div>
+                </div>
+
+                <div className="max-h-[60vh] overflow-y-auto space-y-3 text-sm text-slate-600 pr-1">
+                  <p className="font-semibold text-slate-800">Petunjuk Pelaksanaan Laboratorium:</p>
+                  <ul className="list-disc space-y-2 pl-5">
+                    <li>Semua simulasi dan eksekusi query SQL berjalan langsung di browser tanpa perlu mengunduh MySQL atau XAMPP.</li>
+                    <li>Siswa diharapkan menyelesaikan seluruh tugas modul teori dan lab interaktif sesuai jadwal semester.</li>
+                    <li>Setiap kendala teknis dapat dikonsultasikan secara langsung dengan guru pengampu.</li>
+                  </ul>
+                </div>
+
+                <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+                  <button
+                    onClick={() => setActiveModal(null)}
+                    className="rounded-lg px-4 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100"
+                  >
+                    Tutup
+                  </button>
+                  <a
+                    href="/dokumen/silabus-dan-panduan.pdf"
+                    download
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow hover:bg-primary/90"
+                  >
+                    <Download size={16} />
+                    Unduh PDF
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* POPUP 2: TEMPLATE PRAKTIKUM */}
+            {activeModal === 'template' && (
+              <div className="space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <FileText size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900">Template Laporan Praktikum</h3>
+                    <p className="text-xs text-slate-500">Format Resmi Penyusunan Laporan Praktikum</p>
+                  </div>
+                </div>
+
+                <div className="max-h-[60vh] overflow-y-auto space-y-3 text-sm text-slate-600 pr-1">
+                  <p className="font-semibold text-slate-800">Struktur Penulisan Laporan:</p>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 font-mono text-xs text-slate-700 space-y-1.5">
+                    <p className="font-bold text-slate-900">LAPORAN PRAKTIKUM BASIS DATA</p>
+                    <p>----------------------------------</p>
+                    <p>I. IDENTITAS (Nama, NISN, Kelas)</p>
+                    <p>II. JUDUL MODUL & TANGGAL</p>
+                    <p>III. LANDASAN TEORI</p>
+                    <p>IV. SINTAKS QUERY SQL & HASIL EXECUTE</p>
+                    <p>V. KESIMPULAN & PEMBAHASAN</p>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+                  <button
+                    onClick={() => setActiveModal(null)}
+                    className="rounded-lg px-4 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100"
+                  >
+                    Tutup
+                  </button>
+                  <a
+                    href="/dokumen/template-laporan.pdf"
+                    download
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow hover:bg-primary/90"
+                  >
+                    <Download size={16} />
+                    Unduh Template (.PDF)
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* POPUP 3: STANDAR PENILAIAN */}
+            {activeModal === 'penilaian' && (
+              <div className="space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <CheckCircle size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900">Standar & Rubrik Penilaian</h3>
+                    <p className="text-xs text-slate-500">Kriteria Evaluasi Pembelajaran</p>
+                  </div>
+                </div>
+
+                <div className="max-h-[60vh] overflow-y-auto space-y-3 text-sm text-slate-600 pr-1">
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
+                      <p className="text-xs font-semibold text-slate-500">TUGAS MODUL</p>
+                      <p className="mt-1 text-2xl font-extrabold text-primary">30%</p>
+                    </div>
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
+                      <p className="text-xs font-semibold text-slate-500">PRAKTIKUM LAB</p>
+                      <p className="mt-1 text-2xl font-extrabold text-primary">40%</p>
+                    </div>
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
+                      <p className="text-xs font-semibold text-slate-500">EVALUASI AKHIR</p>
+                      <p className="mt-1 text-2xl font-extrabold text-primary">30%</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-2">
+                    * Catatan: Nilai ketuntasan minimal (KKM) untuk mata pelajaran ini adalah <strong>75.00 Poin</strong>.
+                  </p>
+                </div>
+
+                <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+                  <button
+                    onClick={() => setActiveModal(null)}
+                    className="rounded-lg px-4 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100"
+                  >
+                    Tutup
+                  </button>
+                  <a
+                    href="/dokumen/rubrik-penilaian.pdf"
+                    download
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow hover:bg-primary/90"
+                  >
+                    <Download size={16} />
+                    Unduh Penilaian (.PDF)
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* POPUP 4: AKSES TANTANGAN STUDI KASUS */}
+            {activeModal === 'tantangan' && (
+              <div className="space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-amber-500/10 text-amber-500">
+                    <Trophy size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900">Syarat Akses Kuis & Tantangan</h3>
+                    <p className="text-xs text-slate-500">Ketentuan Pembukaan Level Kuis Studi Kasus</p>
+                  </div>
+                </div>
+
+                <div className="max-h-[60vh] overflow-y-auto space-y-3 text-sm text-slate-600 pr-1">
+                  <p className="text-xs text-slate-500">
+                    Kumpulkan bintang dan akumulasi poin dari latihan modul praktikum untuk membuka akses tingkat kesulitan kuis berikutnya:
+                  </p>
+
+                  <div className="grid gap-3">
+                    {/* Level Easy */}
+                    <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/50 p-3.5">
+                      <div className="flex items-center gap-3">
+                        <span className="rounded-lg bg-emerald-500 px-2.5 py-1 text-xs font-bold text-white">
+                          EASY
+                        </span>
+                        <div>
+                          <p className="font-bold text-slate-800 text-sm">Level Mudah</p>
+                          <p className="text-xs text-slate-500">Studi Kasus Dasar SQL & Tabel</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="flex items-center gap-1 text-sm font-bold text-slate-800">
+                          <Star size={15} className="fill-amber-400 text-amber-400" /> 8 Bintang
+                        </p>
+                        <p className="text-xs text-slate-500">Min. 200 Poin</p>
+                      </div>
+                    </div>
+
+                    {/* Level Medium */}
+                    <div className="flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50/50 p-3.5">
+                      <div className="flex items-center gap-3">
+                        <span className="rounded-lg bg-amber-500 px-2.5 py-1 text-xs font-bold text-white">
+                          MEDIUM
+                        </span>
+                        <div>
+                          <p className="font-bold text-slate-800 text-sm">Level Menengah</p>
+                          <p className="text-xs text-slate-500">Relasi JOIN & Normalisasi 2NF/3NF</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="flex items-center gap-1 text-sm font-bold text-slate-800">
+                          <Star size={15} className="fill-amber-400 text-amber-400" /> 14 Bintang
+                        </p>
+                        <p className="text-xs text-slate-500">Min. 350 Poin</p>
+                      </div>
+                    </div>
+
+                    {/* Level Hard */}
+                    <div className="flex items-center justify-between rounded-xl border border-rose-200 bg-rose-50/50 p-3.5">
+                      <div className="flex items-center gap-3">
+                        <span className="rounded-lg bg-rose-500 px-2.5 py-1 text-xs font-bold text-white">
+                          HARD
+                        </span>
+                        <div>
+                          <p className="font-bold text-slate-800 text-sm">Level Sulit</p>
+                          <p className="text-xs text-slate-500">Kompleks Agregasi & Studi Kasus Terintegrasi</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="flex items-center gap-1 text-sm font-bold text-slate-800">
+                          <Star size={15} className="fill-amber-400 text-amber-400" /> 18 Bintang
+                        </p>
+                        <p className="text-xs text-slate-500">Min. 450 Poin</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+                  <button
+                    onClick={() => setActiveModal(null)}
+                    className="rounded-lg px-4 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100"
+                  >
+                    Tutup
+                  </button>
+                  <a
+                    href="/dokumen/panduan-akses-tantangan.pdf"
+                    download
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow hover:bg-primary/90"
+                  >
+                    <Download size={16} />
+                    Unduh Panduan Tantangan (.PDF)
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

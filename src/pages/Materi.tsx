@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, Clock, Download, Lightbulb, XCircle, CheckCircle2 } from 'lucide-react'
 import VideoPlayer from '../components/VideoPlayer'
@@ -13,6 +14,8 @@ export default function Materi() {
   const modul = daftarModul.find((m) => m.id === id)
   const detail = detailModul[id]
   const materi = detail?.materi
+
+  const [selectedTool, setSelectedTool] = useState<any>(null)
 
   if (!modul || !detail || !materi) {
     return (
@@ -30,6 +33,8 @@ export default function Materi() {
     tandaiSelesai(id, 'konseptual')
     navigate(`/simulasi/${id}`)
   }
+
+  const activeTool = selectedTool || materi.toolsInteraktif?.daftar[0]
 
   return (
     <div className="space-y-6">
@@ -120,6 +125,74 @@ export default function Materi() {
                   </div>
                 ))}
               </div>
+            </section>
+          )}
+
+          {/* ---------------------------------------------------------------------- */}
+          {/* SECTION TOOLS INTERAKTIF (KHUSUS MODUL DENGAN DATA TOOLS LIKE MODUL 2) */}
+          {/* ---------------------------------------------------------------------- */}
+          {materi.toolsInteraktif && (
+            <section className="rounded-2xl border border-slate-200 bg-slate-900 p-6 text-white shadow-sm">
+              <div className="max-w-2xl">
+                <p className="text-xs font-bold tracking-wide text-blue-400">FITUR EKSPLORASI INTERAKTIF</p>
+                <h2 className="mt-1 text-xl font-extrabold">{materi.toolsInteraktif.judul}</h2>
+                <p className="mt-1 text-xs text-slate-400">{materi.toolsInteraktif.deskripsi}</p>
+              </div>
+
+              {/* Grid Tombol Tools Bergambar */}
+              <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {materi.toolsInteraktif.daftar.map((tool: any) => {
+                  const isSelected = activeTool?.id === tool.id
+                  return (
+                    <button
+                      key={tool.id}
+                      type="button"
+                      onClick={() => setSelectedTool(tool)}
+                      className={`flex flex-col items-center rounded-xl p-4 text-center border transition-all ${
+                        isSelected
+                          ? 'border-blue-500 bg-blue-600/30 text-white shadow-lg shadow-blue-500/20 ring-2 ring-blue-500/50 scale-105'
+                          : 'border-slate-800 bg-slate-800/60 text-slate-300 hover:border-slate-700 hover:bg-slate-800'
+                      }`}
+                    >
+                      {/* Wadah Putih Terang Tempat Logo */}
+                      <div className="mb-2.5 flex h-14 w-14 items-center justify-center rounded-xl bg-white p-2 shadow-sm">
+                        {tool.logo ? (
+                          <img src={tool.logo} alt={tool.nama} className="h-10 w-10 object-contain" />
+                        ) : (
+                          <span className="text-xs font-bold text-slate-800">TOOL</span>
+                        )}
+                      </div>
+                      <span className="text-xs font-semibold leading-tight">{tool.nama}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Card Penjelasan Cara Kerja saat Tombol Diklik */}
+              {activeTool && (
+                <div className="mt-6 rounded-xl border border-blue-500/30 bg-slate-800/80 p-5">
+                  <div className="flex items-center gap-3">
+                    {activeTool.logo && (
+                      <img src={activeTool.logo} alt={activeTool.nama} className="h-7 w-7 object-contain" />
+                    )}
+                    <h3 className="text-lg font-bold text-blue-400">{activeTool.nama}</h3>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-300 leading-relaxed">{activeTool.deskripsi}</p>
+                  
+                  <div className="mt-4 border-t border-slate-700/60 pt-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      Alur & Cara Kerja Sistem:
+                    </h4>
+                    <ul className="mt-2 space-y-2 text-sm text-slate-300">
+                      {activeTool.caraKerja.map((step: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <span>{step}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
             </section>
           )}
         </div>
