@@ -15,6 +15,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Beranda />} />
         <Route path="/masuk" element={<Masuk />} />
+
         <Route path="/modul" element={<DaftarModul />} />
         <Route path="/modul/:id" element={<ModulHub />} />
         <Route path="/modul/:id/materi" element={<Materi />} />
