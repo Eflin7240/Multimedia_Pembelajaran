@@ -7,6 +7,7 @@ import DaftarModul from './pages/DaftarModul'
 import ModulHub from './pages/ModulHub'
 import Materi from './pages/Materi'
 import Simulasi from './pages/Simulasi'
+import Kuis from './pages/Kuis'
 
 export default function App() {
   return (
@@ -22,8 +23,8 @@ export default function App() {
         <Route path="/simulasi" element={<Placeholder judul="Simulasi Lab" />} />
         <Route path="/simulasi/:id" element={<Simulasi />} />
 
-        <Route path="/kuis" element={<Placeholder judul="Kuis Studi Kasus" />} />
-        <Route path="/kuis/:id" element={<Placeholder judul="Challenge Modul" />} />
+        <Route path="/kuis" element={<Kuis />} />
+        <Route path="/kuis/:id" element={<Kuis />} />
 
         <Route path="/rekap" element={<Placeholder judul="Rekap Hasil" />} />
       </Route>
