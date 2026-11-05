@@ -11,13 +11,6 @@ export const modul01: ModulDetail = {
       'Pelajari keterbatasan sistem file konvensional (redundansi & inkonsistensi) dan bagaimana DBMS mengatasinya dengan abstraksi data terstruktur.',
     checklist: ['Redundansi data & anomali berkas', 'Definisi Data, Basis Data, dan Metadata'],
   },
-  fase2: {
-    label: 'LAB DEMO',
-    judul: 'Simulasi Arsitektur & Komponen DBMS',
-    deskripsi:
-      'Eksplorasi interaktif bagaimana data mengalir dari aplikasi pengguna, diproses oleh Query Processor, hingga disimpan aman dalam media penyimpanan fisik.',
-    checklist: ['Hirarki Data: Bit, Byte, Field, Record, File, DB', 'Arsitektur 3 Tingkat ANSI-SPARC'],
-  },
   fase3: {
     judul: 'Challenge Pemahaman Dasar',
     deskripsi:

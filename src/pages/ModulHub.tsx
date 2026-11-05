@@ -3,7 +3,7 @@ import { ArrowLeft, BookOpen, ClipboardCheck, MonitorPlay, TrendingUp } from 'lu
 import FaseCard from '../components/FaseCard'
 import { daftarModul } from '../data/modul'
 import { detailModul } from '../data/materi'
-import { hitungProgres, statusModul } from '../lib/progres'
+import { hitungProgres, statusModul, type Fase } from '../lib/progres'
 
 export default function ModulHub() {
   const { id = '' } = useParams()
@@ -25,9 +25,12 @@ export default function ModulHub() {
   }
 
   const status = statusModul(id)
-  const progres = hitungProgres(status)
-  const label =
-    progres.selesai === 0 ? 'Siap Dimulai' : progres.selesai === progres.total ? 'Selesai' : 'Sedang Berjalan'
+const daftarFase: Fase[] = detail.fase2
+  ? ['konseptual', 'interaktif', 'evaluasi']
+  : ['konseptual', 'evaluasi']
+const progres = hitungProgres(status, daftarFase)
+const label =
+  progres.selesai === 0 ? 'Siap Dimulai' : progres.selesai === progres.total ? 'Selesai' : 'Sedang Berjalan'
 
   return (
     <div className="space-y-6">
@@ -61,9 +64,9 @@ export default function ModulHub() {
       </section>
 
       {/* Tiga fase */}
-      <section className="grid gap-6 pt-2 lg:grid-cols-3">
+        <section className={`grid gap-6 pt-2 ${detail.fase2 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
         <FaseCard
-          tag="FASE 1: KONSEPTUAL"
+          tag="KONSEPTUAL"
           kode={`${modul.kode}.1`}
           judul={detail.fase1.judul}
           deskripsi={detail.fase1.deskripsi}
@@ -73,20 +76,22 @@ export default function ModulHub() {
           ikon={BookOpen}
           selesai={!!status.konseptual}
         />
+          {detail.fase2 && (
+          <FaseCard
+            tag="INTERAKTIF & SIMULASI"
+            kode={detail.fase2.label}
+            judul={detail.fase2.judul}
+            deskripsi={detail.fase2.deskripsi}
+            checklist={detail.fase2.checklist}
+            tombol="Mulai Simulasi"
+            to={`/simulasi/${id}`}
+            ikon={MonitorPlay}
+            selesai={!!status.interaktif}
+            sorot
+          />
+        )}
         <FaseCard
-          tag="FASE 2: INTERAKTIF & SIMULASI"
-          kode={detail.fase2.label}
-          judul={detail.fase2.judul}
-          deskripsi={detail.fase2.deskripsi}
-          checklist={detail.fase2.checklist}
-          tombol="Mulai Simulasi"
-          to={`/simulasi/${id}`}
-          ikon={MonitorPlay}
-          selesai={!!status.interaktif}
-          sorot
-        />
-        <FaseCard
-          tag="FASE 3: EVALUASI & STUDI KASUS"
+          tag="EVALUASI & STUDI KASUS"
           kode={`${modul.kode}.3`}
           judul={detail.fase3.judul}
           deskripsi={detail.fase3.deskripsi}

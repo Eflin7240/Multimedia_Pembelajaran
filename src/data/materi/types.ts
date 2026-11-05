@@ -35,7 +35,7 @@ export type ModulDetail = {
   judul: string
   deskripsi: string
   fase1: FaseCard
-  fase2: FaseCard & { label: string }
+  fase2?: FaseCard & { label: string }
   fase3: FaseCard & { tingkat: string; kkm: number }
   peta: {
     kd: string
