@@ -47,7 +47,7 @@ export const modul01: ModulDetail = {
       isi: 'Dalam dunia perangkat lunak, kamu mungkin terbiasa menyimpan data sederhana di file data.json atau siswa.csv. Namun saat sistem menangani jutaan transaksi seperti E-Commerce atau SIM Sekolah, sistem berkas konvensional runtuh akibat keterbatasan strukturalnya.',
       analogi: {
         judul: 'Analogi Lemari Arsip',
-        isi: 'Sistem berkas ibarat menaruh lembaran kertas di laci lemari: cepat untuk 5 dokumen, tetapi merepotkan ketika kamu harus mencari dokumen ke-10.000.',
+                isi: 'Bayangkan lemari arsip di ruang TU sekolah. Lemari adalah basis data, laci adalah tabel (misalnya tabel siswa), map di dalam laci adalah satu baris data (satu siswa), dan label di map adalah kolom (nama, kelas, alamat). Dengan 5 dokumen, mencari map itu cepat. Tetapi dengan 10.000 dokumen yang tersebar di banyak lemari tanpa aturan, mencari satu map jadi merepotkan dan data yang sama bisa tersimpan berulang. DBMS adalah petugas arsip yang tahu persis di mana setiap map disimpan, sehingga kamu cukup bertanya dan data langsung ditemukan.',
       },
     },
     perbandingan: {

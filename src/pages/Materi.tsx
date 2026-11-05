@@ -2,6 +2,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, Clock, Download, Lightbulb, XCircle, CheckCircle2 } from 'lucide-react'
 import VideoPlayer from '../components/VideoPlayer'
 import CekPemahaman from '../components/CekPemahaman'
+import AnalogiLemari from '../components/AnalogiLemari'
 import { daftarModul } from '../data/modul'
 import { detailModul } from '../data/materi'
 import { tandaiSelesai } from '../lib/progres'
@@ -125,6 +126,7 @@ export default function Materi() {
 
         {/* Kolom kanan */}
         <div className="space-y-6">
+          {id === 'mod-01' && <AnalogiLemari />}
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <p className="flex items-center gap-2 text-xs font-bold tracking-wide text-primary">
               <Lightbulb size={14} /> INTISARI KONSEP RPL
