@@ -26,7 +26,11 @@ export function tandaiSelesai(modulId: string, fase: Fase) {
   }
 }
 
-export function hitungProgres(status: StatusModul) {
-  const selesai = Object.values(status).filter(Boolean).length
-  return { selesai, total: 3, persen: Math.round((selesai / 3) * 100) }
+export function hitungProgres(status: StatusModul, fase: Fase[]) {
+  const selesai = fase.filter((f) => status[f]).length
+  return {
+    selesai,
+    total: fase.length,
+    persen: fase.length ? Math.round((selesai / fase.length) * 100) : 0,
+  }
 }
