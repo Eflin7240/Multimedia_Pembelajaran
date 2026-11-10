@@ -43,6 +43,7 @@ export const modul01: ModulDetail = {
                 isi: 'Bayangkan lemari arsip di ruang TU sekolah. Lemari adalah basis data, laci adalah tabel (misalnya tabel siswa), map di dalam laci adalah satu baris data (satu siswa), dan label di map adalah kolom (nama, kelas, alamat). Dengan 5 dokumen, mencari map itu cepat. Tetapi dengan 10.000 dokumen yang tersebar di banyak lemari tanpa aturan, mencari satu map jadi merepotkan dan data yang sama bisa tersimpan berulang. DBMS adalah petugas arsip yang tahu persis di mana setiap map disimpan, sehingga kamu cukup bertanya dan data langsung ditemukan.',
       },
     },
+    
     perbandingan: {
       judul: 'Sistem Berkas Konvensional vs RDBMS',
       tag: 'Studi Kasus: Sistem Sekolah SMK',
@@ -90,4 +91,14 @@ export const modul01: ModulDetail = {
       xp: 25,
     },
   },
+  tujuan: {
+  sapaan: 'Halo! Sebelum mulai, kenalan dulu sama tujuan Modul 1 ya. Setelah belajar ini, kamu bakal bisa:',
+  poin: [
+    'Ngerti bedanya data, informasi, dan basis data tanpa bikin pusing',
+    'Jelasin kenapa file biasa (CSV atau Excel) gampang bermasalah kalau datanya makin banyak',
+    'Kenal komponen utama DBMS dan tugasnya masing-masing',
+    'Paham kenapa hampir semua aplikasi zaman sekarang butuh basis data',
+  ],
+  penutup: 'Santai aja, belajarnya pelan-pelan. Materinya boleh dibuka kapan saja.',
+},
 }

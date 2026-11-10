@@ -35,4 +35,14 @@ export const modul05: ModulDetail = {
       { judul: 'FULL / CROSS', isi: 'Menggabungkan seluruh baris jika terdapat kecocokan di salah satu tabel atau kombinasi perkalian kartesian antar entitas.', rumus: '(A ∪ B) / Kartesian' },
     ],
   },
+    tujuan: {
+    sapaan: 'Waktunya praktik SQL! Di Modul 5 kamu bakal bisa:',
+    poin: [
+      'Ngegabungin data dari beberapa tabel pakai JOIN',
+      'Bedain INNER, LEFT, RIGHT, dan FULL JOIN dari hasilnya',
+      'Ngerti peran Primary Key dan Foreign Key waktu nyambungin tabel',
+      'Nulis dan jalanin query sendiri di editor tanpa takut salah',
+    ],
+    penutup: 'Salah query itu biasa. Dari pesan error-nya kamu justru belajar.',
+  },
 }

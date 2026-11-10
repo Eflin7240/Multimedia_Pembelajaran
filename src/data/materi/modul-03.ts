@@ -97,4 +97,14 @@ export const modul03: ModulDetail = {
       xp: 25,
     },
   },
+    tujuan: {
+    sapaan: 'Yuk, di Modul 3 kita belajar ngegambar rancangan basis data. Setelah ini kamu bakal bisa:',
+    poin: [
+      'Kenalin komponen ERD: entitas, atribut, dan relasi',
+      'Nentuin Primary Key dan Foreign Key yang pas',
+      'Baca dan nentuin kardinalitas relasi: 1:1, 1:N, dan N:M',
+      'Misahin relasi N:M pakai tabel penghubung, lalu ngerancang ERD sendiri',
+    ],
+    penutup: 'Bagian ini emang agak menantang, jadi jangan buru-buru. Coba sambil praktik di kanvasnya!',
+  },
 }

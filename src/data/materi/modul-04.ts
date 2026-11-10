@@ -90,4 +90,14 @@ export const modul04: ModulDetail = {
       xp: 25,
     },
   },
+    tujuan: {
+    sapaan: 'Halo! Di Modul 4 kita belajar ngerapiin data biar nggak berantakan. Setelah ini kamu bakal bisa:',
+    poin: [
+      'Kenali tiga anomali data: tambah, ubah, dan hapus',
+      'Ngerti kenapa data yang tercampur dalam satu tabel itu rawan masalah',
+      'Ngerapiin tabel dari UNF ke 1NF, 2NF, sampai 3NF langkah demi langkah',
+      'Misahin tabel dan nyambungin lagi lewat kunci asing (FK)',
+    ],
+    penutup: 'Tenang, normalisasi itu kayak ngerapiin lemari. Dilakuin pelan-pelan pasti beres.',
+  },
 }
