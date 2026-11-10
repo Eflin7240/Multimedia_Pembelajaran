@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Circle, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Check, Circle, Lock } from 'lucide-react'
+import Ilustrasi, { type NamaIlustrasi } from './Ilustrasi'
 
 type Props = {
   tag: string
@@ -9,16 +10,23 @@ type Props = {
   deskripsi: string
   checklist: string[]
   tombol: string
-  to: string
-  ikon: LucideIcon
+  to?: string // tombol berupa tautan ke halaman lain
+  aksi?: () => void // tombol berupa fungsi (dipakai untuk membuka pop up)
+  gambar: NamaIlustrasi
   selesai: boolean
   sorot?: boolean
+  terkunci?: boolean
+  alasanKunci?: string
   info?: ReactNode
 }
 
 export default function FaseCard({
-  tag, kode, judul, deskripsi, checklist, tombol, to, ikon: Ikon, selesai, sorot, info,
+  tag, kode, judul, deskripsi, checklist, tombol, to, aksi, gambar, selesai, sorot, terkunci, alasanKunci, info,
 }: Props) {
+  const kelasTombol = `inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition ${
+    sorot ? 'bg-primary text-white hover:bg-blue-700' : 'bg-primary/10 text-secondary hover:bg-primary/20'
+  }`
+
   return (
     <article
       className={`relative flex flex-col rounded-2xl border bg-white p-5 shadow-sm ${
@@ -36,8 +44,8 @@ export default function FaseCard({
         <span className="font-mono text-xs text-slate-500">{kode}</span>
       </div>
 
-      <div className="mt-4 grid h-32 place-items-center rounded-xl bg-primary/5 text-primary">
-        <Ikon size={48} strokeWidth={1.5} />
+      <div className="mt-4 grid h-32 place-items-center rounded-xl bg-primary/5 p-2">
+        <Ilustrasi nama={gambar} className="h-full w-full" />
       </div>
 
       <h3 className="mt-4 text-lg font-bold">{judul}</h3>
@@ -61,14 +69,26 @@ export default function FaseCard({
       {info}
 
       <div className="mt-auto pt-4">
-        <Link
-          to={to}
-          className={`inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition ${
-            sorot ? 'bg-primary text-white hover:bg-blue-700' : 'bg-primary/10 text-secondary hover:bg-primary/20'
-          }`}
-        >
-          {tombol} <ArrowRight size={14} />
-        </Link>
+        {terkunci ? (
+          <>
+            <button
+              type="button"
+              disabled
+              className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-400"
+            >
+              <Lock size={14} /> Terkunci
+            </button>
+            {alasanKunci && <p className="mt-2 text-center text-xs text-slate-500">{alasanKunci}</p>}
+          </>
+        ) : aksi ? (
+          <button type="button" onClick={aksi} className={kelasTombol}>
+            {tombol} <ArrowRight size={14} />
+          </button>
+        ) : (
+          <Link to={to ?? '#'} className={kelasTombol}>
+            {tombol} <ArrowRight size={14} />
+          </Link>
+        )}
       </div>
     </article>
   )

@@ -1,12 +1,4 @@
-import {
-  Database,
-  SquareTerminal,
-  Workflow,
-  Table2,
-  Merge,
-  ClipboardCheck,
-  type LucideIcon,
-} from 'lucide-react'
+import type { NamaIlustrasi } from '../components/Ilustrasi'
 
 export type Modul = {
   id: string
@@ -14,7 +6,7 @@ export type Modul = {
   label: string
   judul: string
   deskripsi: string
-  ikon: LucideIcon
+  gambar: NamaIlustrasi
   jenis: 'modul' | 'kuis'
   jp?: number
   durasiMenit?: number
@@ -28,7 +20,7 @@ export const daftarModul: Modul[] = [
     judul: 'Konsep Dasar Basis Data',
     deskripsi:
       'Memahami arsitektur data, keunggulan DBMS dibandingkan sistem file tradisional, field, record, dan tabel.',
-    ikon: Database,
+    gambar: 'database',
     jenis: 'modul',
     jp: 8,
   },
@@ -39,7 +31,7 @@ export const daftarModul: Modul[] = [
     judul: 'Animasi & Tools DBMS',
     deskripsi:
       'Pengenalan engine MySQL, MariaDB, phpMyAdmin, serta interaksi konsol CLI untuk mengeksekusi perintah dasar.',
-    ikon: SquareTerminal,
+    gambar: 'terminal',
     jenis: 'modul',
     jp: 12,
   },
@@ -50,7 +42,7 @@ export const daftarModul: Modul[] = [
     judul: 'ERD & Relasi Entitas',
     deskripsi:
       'Merancang Entity Relationship Diagram (ERD), menentukan Primary Key, Foreign Key, serta kardinalitas relasi.',
-    ikon: Workflow,
+    gambar: 'erd',
     jenis: 'modul',
     jp: 14,
   },
@@ -61,7 +53,7 @@ export const daftarModul: Modul[] = [
     judul: 'Normalisasi Data',
     deskripsi:
       'Eliminasi anomali insert, update, dan delete melalui tahapan bentuk normal 1NF, 2NF, hingga 3NF.',
-    ikon: Table2,
+    gambar: 'normalisasi',
     jenis: 'modul',
     jp: 12,
   },
@@ -72,7 +64,7 @@ export const daftarModul: Modul[] = [
     judul: 'SQL & Relasi Tabel (JOIN)',
     deskripsi:
       'Implementasi DDL, DML, agregasi, serta relasi multi-tabel dengan INNER, LEFT, dan RIGHT JOIN.',
-    ikon: Merge,
+    gambar: 'join',
     jenis: 'modul',
     jp: 16,
   },
@@ -83,7 +75,7 @@ export const daftarModul: Modul[] = [
     judul: 'Kuis & Studi Kasus Mandiri',
     deskripsi:
       'Uji kompetensi terintegrasi sistem POS toko ritel: skema database, foreign key constraints, dan query SQL.',
-    ikon: ClipboardCheck,
+    gambar: 'sertifikat',
     jenis: 'kuis',
     durasiMenit: 90,
   },

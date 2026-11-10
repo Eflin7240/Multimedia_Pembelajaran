@@ -42,9 +42,11 @@ export type ModulDetail = {
     kd: string
     poin: { judul: string; isi: string; rumus?: string }[]
   }
-  materi?: Materi // boleh kosong dulu; halaman materi akan menampilkan "sedang disiapkan"
+  materi?: Materi 
+  tujuan?: Tujuan
+  // boleh kosong dulu; halaman materi akan menampilkan "sedang disiapkan"
 }
-
+export type Tujuan = { sapaan: string; poin: string[]; penutup?: string }
 // =============================================================
 // TAMBAHAN UNTUK TOOLS INTERAKTIF (KHUSUS MODUL 2 & LANJUTAN)
 // =============================================================

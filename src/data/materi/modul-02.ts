@@ -153,4 +153,14 @@ export const modul02: ModulDetail = {
       xp: 25,
     },
   },
+    tujuan: {
+    sapaan: 'Hai! Di Modul 2 kamu bakal kenalan sama alat-alat buat ngurus basis data. Nanti kamu bisa:',
+    poin: [
+      'Ngerti kerja server dan client di DBMS, misalnya MySQL/MariaDB dengan phpMyAdmin atau terminal',
+      'Bedain kerja lewat GUI (klik-klik di phpMyAdmin) dan CLI (ngetik perintah di terminal)',
+      'Login ke MySQL lewat terminal dan tahu port bawaannya (3306)',
+      'Ngejalanin perintah dasar kayak CREATE, SHOW, USE, dan DROP',
+    ],
+    penutup: 'Nggak perlu hafal semuanya sekarang. Sambil praktik di simulasi, lama-lama juga terbiasa.',
+  },
 }

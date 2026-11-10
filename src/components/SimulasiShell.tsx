@@ -24,7 +24,7 @@ export default function SimulasiShell({
 
   const lanjut = () => {
     if (selesai) tandaiSelesai(modulId, 'interaktif')
-    navigate(`/kuis/${modulId}`)
+    navigate(`/modul/${modulId}`, { state: { bukaChallenge: true } })
   }
 
   return (
