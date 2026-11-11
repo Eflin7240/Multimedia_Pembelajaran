@@ -8,13 +8,15 @@ import { detailModul } from '../data/materi'
 import { daftarChallenge } from '../data/challenge'
 import type { Challenge as DataChallenge } from '../data/challenge/types'
 import { alasanTerkunci } from '../lib/akses'
-import { AMBANG_BINTANG, hitungBintang, simpanSkor } from '../lib/bintang'
+import { AMBANG_BINTANG, hitungBintang } from '../lib/bintang'
 import { periksa as periksaErd, type Erd } from '../lib/erd'
-import { tandaiSelesai } from '../lib/progres'
+import { simpanKuisModul } from '../lib/dataBelajar'
+import { useDataBelajar } from '../lib/useDataBelajar'
+import { useAuth } from '../context/useAuth'
 
 type Syarat = { teks: string; ok: boolean }
 // Catatan hasil per soal: poin yang diperoleh, plus detail jawabannya
-type Catatan = { poin: number; pilihan?: number; syarat?: Syarat[] }
+type Catatan = { poin: number; pilihan?: number; syarat?: Syarat[]; erd?: Erd }
 
 function DaftarSyarat({ syarat }: { syarat: Syarat[] }) {
   return (
@@ -45,9 +47,13 @@ const lompat = (id: string) =>
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
 export default function Challenge() {
+  const { user, loading } = useAuth()
+  useDataBelajar()
   const { id = '' } = useParams()
   const modul = daftarModul.find((m) => m.id === id)
   const challenge = daftarChallenge[id]
+  if (loading) return <p role="status">Memuat data akun…</p>
+  if (!user) return <section className="rounded-2xl border border-slate-200 bg-white p-6"><h1 className="text-xl font-bold">Masuk untuk mengerjakan kuis modul</h1><Link to="/masuk" className="mt-3 inline-block font-semibold text-primary">Masuk / daftar akun</Link></section>
 
   if (!modul || !challenge) {
     return (
@@ -94,6 +100,9 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
 
   const [catatan, setCatatan] = useState<Record<number, Catatan>>({})
   const [rekorBaru, setRekorBaru] = useState(false)
+  const [menyimpan, setMenyimpan] = useState(false)
+  const [tersimpan, setTersimpan] = useState(false)
+  const [gagalSimpan, setGagalSimpan] = useState('')
   const [percobaan, setPercobaan] = useState(0) // naik setiap "Ulangi" supaya kanvas ERD dimulai dari awal
   const erdRef = useRef<Record<number, Erd>>({}) // ERD terakhir yang digambar siswa, per nomor soal
 
@@ -110,15 +119,24 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
   const target = AMBANG_BINTANG.find((a) => a.bintang === bintang + 1)
   const lebar = soal.some((s) => s.jenis === 'erd') ? 'max-w-4xl' : 'max-w-3xl'
 
+  async function simpan(semua: Record<number, Catatan>) {
+    setMenyimpan(true); setGagalSimpan('')
+    try {
+      const bukti = soal.map((s, i) => s.jenis === 'pilihan' ? { pilihan: semua[i].pilihan } : { erd: semua[i].erd ?? { entitas: [], relasi: [] } })
+      const data = await simpanKuisModul(modulId, bukti)
+      setRekorBaru(data.rekorBaru); setTersimpan(true)
+      setCatatan(Object.fromEntries(data.hasil.catatan.map((c, i) => [i, { ...semua[i], ...c }])))
+    } catch (e) { setGagalSimpan(e instanceof Error ? e.message : 'Hasil belum tersimpan.') }
+    finally { setMenyimpan(false) }
+  }
+
   // Simpan hasil satu soal. Kalau ini soal terakhir yang dijawab, skor akhir langsung disimpan.
   const catat = (i: number, baru: Catatan) => {
     const berikut = { ...catatan, [i]: baru }
     setCatatan(berikut)
 
     if (Object.keys(berikut).length === total) {
-      const skorAkhir = Object.values(berikut).reduce((t, c) => t + c.poin, 0)
-      setRekorBaru(simpanSkor(modulId, skorAkhir))
-      if (skorAkhir >= kkm) tandaiSelesai(modulId, 'evaluasi')
+      void simpan(berikut)
     }
   }
 
@@ -139,13 +157,16 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
     catat(i, {
       poin: syarat.length ? Math.round((poinPerSoal * terpenuhi) / syarat.length) : 0,
       syarat,
+      erd: structuredClone(erd),
     })
   }
 
   const ulang = () => {
+    if (menyimpan) return
     erdRef.current = {}
     setCatatan({})
     setRekorBaru(false)
+    setTersimpan(false); setGagalSimpan('')
     setPercobaan((p) => p + 1)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -332,6 +353,9 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
           className="scroll-mt-44 rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm"
         >
           <Trophy size={40} className="mx-auto text-primary" />
+          <p role="status" className="mt-3 text-sm font-semibold text-primary">{menyimpan ? 'Memeriksa jawaban dan menyimpan ke akun…' : tersimpan ? 'Hasil akun tersimpan di database.' : 'Hasil belum tersimpan.'}</p>
+          {gagalSimpan && <p role="alert" className="mt-2 text-sm text-danger">{gagalSimpan}</p>}
+          {!tersimpan && <button type="button" disabled={menyimpan} onClick={() => { void simpan(catatan) }} className="mt-3 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{menyimpan ? 'Menyimpan…' : 'Coba simpan lagi'}</button>}
           <h2 className="mt-3 text-2xl font-extrabold">
             {lulus ? 'Challenge Selesai!' : 'Challenge Selesai, Ayo Coba Lagi!'}
           </h2>

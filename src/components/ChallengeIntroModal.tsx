@@ -5,10 +5,12 @@ import Bintang from './Bintang'
 import Ilustrasi from './Ilustrasi'
 import { daftarChallenge } from '../data/challenge'
 import { AMBANG_BINTANG, hitungBintang, skorTerbaik } from '../lib/bintang'
+import { useDataBelajar } from '../lib/useDataBelajar'
 
 type Props = { buka: boolean; tutup: () => void; modulId: string; judulModul: string; kkm: number }
 
 export default function ChallengeIntroModal({ buka, tutup, modulId, judulModul, kkm }: Props) {
+  useDataBelajar()
   const navigate = useNavigate()
   const challenge = daftarChallenge[modulId]
   const terbaik = skorTerbaik(modulId)

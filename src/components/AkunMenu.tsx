@@ -4,8 +4,10 @@ import { User as UserIcon, LogOut } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 
 export default function AkunMenu() {
-  const { user, logout } = useAuth()
+  const { user, logout, loading } = useAuth()
   const [open, setOpen] = useState(false)
+  const [sibuk, setSibuk] = useState(false)
+  const [error, setError] = useState('')
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -16,6 +18,7 @@ export default function AkunMenu() {
     return () => document.removeEventListener('mousedown', tutup)
   }, [])
 
+  if (loading) return <span role="status" className="text-xs text-slate-500">Memuat akun…</span>
   if (!user) {
     return (
       <Link
@@ -55,15 +58,22 @@ export default function AkunMenu() {
           >
             Rekap Hasil Saya
           </Link>
+          {user.role === 'admin' && <Link to="/admin" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-slate-100">Halaman Admin</Link>}
+          <Link to="/ganti-password" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">Ganti Password</Link>
           <button
-            onClick={() => {
-              logout()
-              setOpen(false)
+            type="button"
+            disabled={sibuk}
+            onClick={async () => {
+              setSibuk(true); setError('')
+              try { await logout(); setOpen(false) }
+              catch (e) { setError(e instanceof Error ? e.message : 'Logout gagal. Coba lagi.') }
+              finally { setSibuk(false) }
             }}
             className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-danger hover:bg-red-50"
           >
-            <LogOut size={16} /> Keluar
+            <LogOut size={16} /> {sibuk ? 'Keluar…' : 'Keluar'}
           </button>
+          {error && <p role="alert" className="px-3 py-2 text-xs text-danger">{error}</p>}
         </div>
       )}
     </div>

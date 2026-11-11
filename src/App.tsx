@@ -9,6 +9,8 @@ import Simulasi from './pages/Simulasi'
 import Kuis from './pages/Kuis'
 import RekapHasilPage from './RekapHasilPage'
 import Challenge from './pages/Challenge'
+import Admin from './pages/Admin'
+import GantiPassword from './pages/GantiPassword'
 
 export default function App() {
   return (
@@ -16,6 +18,8 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Beranda />} />
         <Route path="/masuk" element={<Masuk />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/ganti-password" element={<GantiPassword />} />
 
         <Route path="/modul" element={<DaftarModul />} />
         <Route path="/modul/:id" element={<ModulHub />} />

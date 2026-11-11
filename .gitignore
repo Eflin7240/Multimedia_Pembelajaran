@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+/backend/config.local.php
+/backend/var/
+/node_modules/
+/dist/
+/.bank-build/
+/.uji-*/
+/backups/
+/*.zip

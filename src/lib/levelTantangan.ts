@@ -1,5 +1,7 @@
 import { bankLevel, levelIds, levelInfo, type KasusLevel, type LevelId } from '../data/levelTantangan'
 import { hitungBintang, skorTerbaik } from './bintang'
+import { lihatDataBelajar, langgananDataBelajar, ingatKasusAkun, simpanLevelAkun } from './dataBelajar'
+import type { JawabanTantangan } from '../components/TantanganLevelReview'
 
 export type CapaianModul = { bintang: number; poin: number }
 const modulIds = ['mod-01', 'mod-02', 'mod-03', 'mod-04', 'mod-05']
@@ -18,11 +20,13 @@ export function bacaCapaianModul(): CapaianModul {
 export const snapshotCapaian = () => JSON.stringify(bacaCapaianModul())
 export function langgananCapaian(ubah: () => void) {
   // storage untuk tab lain; focus/event/poll untuk perubahan dari halaman kuis pada tab yang sama.
+  const lepas = langgananDataBelajar(ubah)
   window.addEventListener('storage', ubah)
   window.addEventListener('focus', ubah)
   window.addEventListener('basisdata-skor-berubah', ubah)
   const timer = window.setInterval(ubah, 1500)
   return () => {
+    lepas()
     window.removeEventListener('storage', ubah); window.removeEventListener('focus', ubah)
     window.removeEventListener('basisdata-skor-berubah', ubah); window.clearInterval(timer)
   }
@@ -31,25 +35,12 @@ export const levelValid = (id: string): id is LevelId => levelIds.some(x => x ==
 export const bolehAkses = (id: LevelId, capaian: CapaianModul) =>
   Number.isFinite(capaian.bintang) && Number.isFinite(capaian.poin) && capaian.bintang >= levelInfo[id].bintang && capaian.poin >= levelInfo[id].poin
 
-export const identitasLevel = (user: { nama: string; kelas: string } | null) => user
-  ? JSON.stringify([user.nama.trim().toLowerCase(), user.kelas.trim().toLowerCase()]) : 'tamu'
+export const identitasLevel = (user: { id: number; nama: string; kelas: string } | null) => user ? `user:${user.id}` : 'tamu'
 export type HasilLevel = { nilai: number; benar: number; total: number; kasus: string; selesaiPada: string; durasiDetik: number }
 type Riwayat = { terakhir: Partial<Record<LevelId, string>>; hasil: Partial<Record<LevelId, HasilLevel & { terbaik: number }>> }
-const memori = new Map<string, Riwayat>()
-const gagal = new Set<string>()
-const key = (identitas: string) => `basisdata-level-tantangan-v3:${identitas}`
 export function bacaRiwayat(identitas: string): Riwayat {
-  if (gagal.has(identitas)) return memori.get(identitas) ?? { terakhir: {}, hasil: {} }
-  try {
-    const raw = JSON.parse(localStorage.getItem(key(identitas)) ?? 'null') as Riwayat | null
-    if (raw && raw.terakhir && typeof raw.terakhir === 'object' && raw.hasil && typeof raw.hasil === 'object') return raw
-  } catch { /* gunakan memori jika storage tidak tersedia */ }
-  return memori.get(identitas) ?? { terakhir: {}, hasil: {} }
-}
-function simpan(identitas: string, data: Riwayat) {
-  memori.set(identitas, data)
-  try { localStorage.setItem(key(identitas), JSON.stringify(data)); gagal.delete(identitas); return true }
-  catch { gagal.add(identitas); return false }
+  const s = lihatDataBelajar()
+  return identitas === `user:${s.userId}` && s.siap ? s.data.riwayat : { terakhir: {}, hasil: {} }
 }
 export function pilihKasusLevel(level: LevelId, identitas: string, hindari?: string): KasusLevel {
   const terakhir = hindari ?? bacaRiwayat(identitas).terakhir[level]
@@ -65,15 +56,14 @@ export function pilihKasusLevel(level: LevelId, identitas: string, hindari?: str
   }) }
 }
 export function ingatKasusLevel(level: LevelId, identitas: string, kasus: string) {
-  const r = bacaRiwayat(identitas)
-  return simpan(identitas, { ...r, terakhir: { ...r.terakhir, [level]: kasus } })
+  return identitas === `user:${lihatDataBelajar().userId}` && kasus.startsWith(`${level}-`) ? ingatKasusAkun(kasus) : false
 }
-export function selesaikanLevel(level: LevelId, identitas: string, kasus: KasusLevel, jawaban: Record<string, { benar: boolean }>, durasiDetik: number) {
+export async function selesaikanLevel(level: LevelId, identitas: string, kasus: KasusLevel, jawaban: Record<string, JawabanTantangan>, durasiDetik: number, attemptId: string) {
   if (!bolehAkses(level, bacaCapaianModul()) || kasus.level !== level || !kasus.soal.every(s => typeof jawaban[s.id]?.benar === 'boolean')) return null
-  const benar = kasus.soal.filter(s => jawaban[s.id].benar).length
-  const hasil: HasilLevel = { nilai: Math.round(benar * 10000 / kasus.soal.length) / 100, benar, total: kasus.soal.length, kasus: kasus.id, selesaiPada: new Date().toISOString(), durasiDetik }
-  const r = bacaRiwayat(identitas)
-  const data = { ...hasil, terbaik: Math.max(hasil.nilai, r.hasil[level]?.terbaik ?? 0) }
-  return { hasil: data, tersimpan: simpan(identitas, { ...r, hasil: { ...r.hasil, [level]: data } }) }
+  if (identitas !== `user:${lihatDataBelajar().userId}`) throw new Error('Akun sudah berubah. Muat ulang halaman.')
+  const result = await simpanLevelAkun(kasus, jawaban, durasiDetik, attemptId)
+  const data = result.data.riwayat.hasil[level]
+  if (!data) throw new Error('Hasil server tidak lengkap.')
+  return { hasil: data, tersimpan: true, catatan: result.penilaian.catatan }
 }
 export const normalJawabanLevel = (s: string) => s.trim().toLowerCase().replace(/`/g, '').replace(/;$/, '').replace(/\s+/g, '')
