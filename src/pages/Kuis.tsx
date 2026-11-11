@@ -20,30 +20,6 @@ export default function Kuis() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const [pilihanModul, setPilihanModul] = useState<TahapId | null>(null)
-  const identitas = identitasTantangan(user)
-  const p = bacaProgres(identitas)
-  if (id) {
-    if (!tahapValid(id)) return <section className={panel}><h1 className="text-xl font-bold">Tantangan tidak ditemukan</h1><Link to="/kuis" className="mt-3 inline-block text-primary">Kembali ke daftar tantangan</Link></section>
-    if (!tahapTerbuka(id, p)) {
-      const pertama = urutanTantangan.find(x => !p.selesai[x]) ?? 'eval-kasus'
-      return <section className={`${panel} mx-auto max-w-xl text-center`}>
-        <LockKeyhole className="mx-auto text-primary" size={32} />
-        <h1 className="mt-3 text-2xl font-bold">{judul(id)} masih terkunci</h1>
-        <p className="mt-3 text-sm text-slate-600">Kerjakan berurutan dari Modul 1 sampai Modul 5, lalu Eval Kasus. Selesaikan {judul(pertama)} terlebih dahulu.</p>
-        <Link to={`/kuis/${pertama}`} className={`mt-5 inline-block ${aksi}`}>Kerjakan {judul(pertama)}</Link>
-      </section>
-    }
-    return <Pengerjaan key={`${identitas}:${id}`} id={id} identitas={identitas} />
-  }
-  const tuntas = urutanTantangan.filter(x => p.selesai[x]).length
-  return <div className="space-y-5">
-    <header className={panel}>
-      <p className="text-xs font-bold tracking-wide text-primary">LATIHAN BASIS DATA</p>
-      <h1 className="mt-2 text-3xl font-extrabold">Tantangan Studi Kasus</h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Mulai dari Modul 1 hingga Modul 5 secara berurutan, lalu kerjakan Eval Kasus. Setiap bagian berisi studi kasus acak dan 10 soal. Cerita dan soal muncul setelah kamu memilih bagian.</p>
-      <p className="mt-3 text-sm font-semibold text-primary">{tuntas}/6 tahap selesai{tuntas === 6 ? ' · Semua bagian bebas diakses' : ''}</p>
-      <p className="mt-2 text-xs text-slate-500">{user ? `Progres: ${user.nama} · ${user.kelas}.` : 'Mode tamu. Masuk dengan nama dan kelas untuk memisahkan progres siswa.'} Progres tersimpan pada browser ini. Kasus yang sama tidak muncul dua kali berturut-turut; siswa berbeda masih dapat memperoleh kasus yang sama.</p>
   const identitas = identitasLevel(user)
   const capaian = JSON.parse(useSyncExternalStore(langgananCapaian, snapshotCapaian, () => '{"bintang":0,"poin":0}')) as CapaianModul
   const [pilihan, setPilihan] = useState<LevelId | null>(null)
