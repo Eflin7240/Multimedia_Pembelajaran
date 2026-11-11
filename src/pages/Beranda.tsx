@@ -56,9 +56,9 @@ export default function Beranda() {
       </section>
 
       {/* Statistik */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 bg-blue-600 p-6 rounded-2xl shadow-sm">
         <StatCard ikon={BookOpen} label="Total Modul" nilai={`${jumlahModul} Modul Teori & Praktik`} />
-        <StatCard ikon={BadgeCheck} label="Evaluasi Akhir" nilai="1 Studi Kasus Mandiri" />
+        <StatCard ikon={BadgeCheck} label="Evaluasi Akhir" nilai="3 Level Challenge Studi Kasus" />
         <StatCard ikon={Clock} label="Alokasi Waktu" nilai={`${totalJP} Jam Pelajaran (JP)`} />
         <StatCard ikon={Star} label="KKM Kelulusan" nilai="≥ 75.00 Poin" />
       </section>
@@ -85,10 +85,10 @@ export default function Beranda() {
       </section>
 
       {/* Section Tombol Pemicu Modal/Popup (4 Tombol) */}
-      <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-5 shadow-sm sm:p-6">
+      <section className="rounded-2xl border border-slate-200 bg-blue-600 p-5 shadow-sm sm:p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-bold text-slate-900">Dokumen & Panduan Praktikum</h3>
-          <p className="text-xs text-slate-500">
+          <h3 className="text-lg font-bold text-slate-100">Dokumen & Panduan Praktikum</h3>
+          <p className="text-xs text-slate-200">
             Pilih dokumen di bawah ini untuk melihat pratinjau detail serta mengunduh berkas PDF.
           </p>
         </div>
