@@ -1,4 +1,4 @@
-export const urutanTantangan = ['eval-kasus', 'mod-01', 'mod-02', 'mod-03', 'mod-04', 'mod-05'] as const
+export const urutanTantangan = ['mod-01', 'mod-02', 'mod-03', 'mod-04', 'mod-05', 'eval-kasus'] as const
 export type TahapId = typeof urutanTantangan[number]
 export type Pilihan = { jenis: 'pilihan'; pertanyaan: string; pilihan: string[]; benar: number; pembahasan: string }
 export type Praktik = { jenis: 'praktik'; pertanyaan: string; jawaban: string[]; pembahasan: string; sql?: { tabel: string; batas: number } }
