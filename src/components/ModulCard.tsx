@@ -9,7 +9,18 @@ export default function ModulCard({ modul }: { modul: Modul }) {
   return (
     <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
       <div className="flex items-center justify-between gap-2">
-        <span className={`font-mono text-xs ${kuis ? 'text-success' : 'text-slate-500'}`}>KODE: {modul.kode}</span>
+        <span className={`font-mono text-xs ${kuis ? 'text-success' : 'text-slate-500'}`}>
+        {(() => {
+            switch (modul.kode) {
+              case 'MOD-01': return 'Modul 01';
+              case 'MOD-02': return 'Modul 02';
+              case 'MOD-03': return 'Modul 03';
+              case 'MOD-04': return 'Modul 04';
+              case 'MOD-05': return 'Modul 05';
+              default: return `MOD-${modul.kode}`;
+            }
+          })()}
+        </span>
         <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold">{modul.label}</span>
       </div>
 
@@ -33,7 +44,7 @@ export default function ModulCard({ modul }: { modul: Modul }) {
             kuis ? 'bg-success hover:bg-green-700' : 'bg-primary hover:bg-blue-700'
           }`}
         >
-          {kuis ? 'Mulai Kuis' : 'Mulai Belajar'}
+          {kuis ? 'Mulai Tantangan' : 'Mulai Belajar'}
           {kuis ? <Play size={14} /> : <ArrowRight size={14} />}
         </Link>
       </div>

@@ -134,7 +134,7 @@ export default function Simulasi() {
             return (
               <div
                 key={item.id}
-                className={`relative flex flex-col justify-between rounded-3xl border-2 border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-xl ${item.warnaBorder}`}
+                className={`relative flex flex-col justify-between rounded-3xl border-2 border-slate-200 bg-blue-100/50 p-6 shadow-sm transition-all duration-300 hover:shadow-xl ${item.warnaBorder}`}
               >
                 {/* Badge Top Floating */}
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
@@ -146,7 +146,7 @@ export default function Simulasi() {
                 <div>
                   {/* Subhead Tag & Kategori */}
                   <div className="mt-2 flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-primary">
+                    <span className="rounded-lg bg-white px-2.5 py-1 text-primary">
                       {item.tag}
                     </span>
                     <span className="font-mono">{item.kategori}</span>

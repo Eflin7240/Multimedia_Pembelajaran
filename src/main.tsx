@@ -4,14 +4,15 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import AuthProvider from './context/AuthProvider'
-
-
+import SplashScreen from './components/SplashScreen'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-    <App  />
-  </AuthProvider>
+        <SplashScreen>
+          <App />
+        </SplashScreen>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 )

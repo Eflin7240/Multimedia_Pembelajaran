@@ -102,6 +102,9 @@ export default function HubDefault({ id }: { id: string }) {
           to={`/modul/${id}/materi`}
           gambar="buku"
           selesai={!!status.konseptual}
+          className="bg-blue-100 text-primary"
+          tombolWarna="bg-white text-blue-600 shadow-md hover:bg-blue-50"
+          tagWarna="bg-white text-primary shadow-sm"
         />
 
         {detail.fase2 && (
@@ -120,32 +123,35 @@ export default function HubDefault({ id }: { id: string }) {
         )}
 
         <FaseCard
-          tag="EVALUASI & STUDI KASUS"
+          tag="KUIS"
           kode={`${modul.kode}.3`}
           judul={detail.fase3.judul}
           deskripsi={detail.fase3.deskripsi}
           checklist={detail.fase3.checklist}
-          tombol="Ikuti Challenge"
+          tombol="Ikuti Kuis"
+          tombolWarna="bg-white text-blue-600 shadow-md hover:bg-blue-50"
           aksi={() => setBukaChallenge(true)}
           gambar="sertifikat"
+          className="bg-blue-100 text-primary"
+          tagWarna="bg-white text-primary shadow-sm"
           selesai={!!status.evaluasi}
           terkunci={!!kunci}
           alasanKunci={kunci ?? undefined}
           info={
             <>
-              <dl className="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-slate-50 p-3 text-xs">
+              <dl className="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-primary p-3 text-xs">
                 <div>
-                  <dt className="text-slate-500">Taraf Kesulitan</dt>
-                  <dd className="font-semibold">{detail.fase3.tingkat}</dd>
+                  <dt className="text-slate-500 text-white">Taraf Kesulitan</dt>
+                  <dd className="font-semibold text-white">{detail.fase3.tingkat}</dd>
                 </div>
                 <div>
-                  <dt className="text-slate-500">Passing Grade (KKM)</dt>
-                  <dd className="font-semibold">{detail.fase3.kkm} / 100</dd>
+                  <dt className="text-slate-500 text-white">Passing Grade (KKM)</dt>
+                  <dd className="font-semibold text-white">{detail.fase3.kkm} / 100</dd>
                 </div>
               </dl>
-              <div className="mt-2 flex items-center justify-between rounded-xl bg-slate-50 p-3 text-xs">
-                <span className="text-slate-500">Skor terbaik</span>
-                <span className="flex items-center gap-2 font-semibold">
+              <div className="mt-2 flex items-center justify-between rounded-xl bg-primary p-3 text-xs">
+                <span className="text-slate-500 text-white">Skor terbaik</span>
+                <span className="flex items-center gap-2 font-semibold text-white">
                   {skorTerbaik(id) ?? '-'} <Bintang jumlah={bintangModul(id)} ukuran={14} />
                 </span>
               </div>
