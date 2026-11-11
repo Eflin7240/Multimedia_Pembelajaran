@@ -6,6 +6,7 @@ import { hitungBintang } from './lib/bintang'
 import { daftarModul } from './data/modul'
 import { detailModul } from './data/materi'
 import { segarkanDataBelajar } from './lib/dataBelajar'
+import RekapCetak from './components/RekapCetak'
 
 export default function RekapHasilPage() {
   const { user, loading, error: errorAkun } = useAuth()
@@ -23,6 +24,7 @@ export default function RekapHasilPage() {
   const ketuntasan = Math.round(tuntas * 100 / modul.length)
   const panel = 'rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7'
   return <div className="mx-auto max-w-5xl space-y-5">
+    <RekapCetak user={user} data={state.data} />
     <div className="flex flex-wrap items-center justify-between gap-3 text-sm"><Link to="/" className="inline-flex items-center gap-2 font-semibold text-primary"><ArrowLeft size={16} />Kembali ke Beranda</Link><span className="text-xs text-slate-500">NIS {user.nis} · Akun #{user.id}</span></div>
     <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <header className="flex flex-wrap items-center justify-between gap-5 bg-secondary p-5 text-white sm:p-7"><div><p className="inline-flex items-center gap-2 text-xs font-semibold text-blue-200"><FileText size={15} />LAPORAN HASIL AKUMULASI 5 MODUL</p><h1 className="mt-2 text-xl font-extrabold sm:text-2xl">Rekapitulasi Progres Keseluruhan</h1><p className="mt-2 text-sm text-slate-300">Perolehan nilai, bintang, dan ketuntasan belajar akunmu.</p></div><div><p className="text-xs text-slate-400">Siswa Pengguna</p><p className="mt-1 text-sm font-bold">{user.nama}</p><p className="mt-1 text-xs text-slate-300">{user.kelas} · NIS {user.nis}</p></div></header>
@@ -47,6 +49,6 @@ export default function RekapHasilPage() {
       })}</div>
     </section>
     <section className={panel}><h2 className="text-lg font-extrabold">Riwayat Tantangan Terbaru</h2>{state.data.percobaan.length === 0 ? <p className="mt-3 text-sm text-slate-500">Belum ada hasil Tantangan pada akun ini.</p> : <div className="mt-4 overflow-x-auto"><table className="w-full text-left text-sm"><thead className="bg-surface"><tr>{['Level','Kasus','Benar','Nilai','Waktu'].map(c => <th key={c} scope="col" className="p-3">{c}</th>)}</tr></thead><tbody>{state.data.percobaan.map(p => <tr key={p.id} className="border-t border-slate-100"><td className="p-3 uppercase">{p.level}</td><td className="p-3">{p.kasus}</td><td className="p-3">{p.benar}/{p.total}</td><td className="p-3">{p.nilai}/100</td><td className="whitespace-nowrap p-3">{p.selesaiPada}</td></tr>)}</tbody></table></div>}</section>
-    <div className="flex flex-wrap justify-end gap-3 print:hidden"><button type="button" disabled={state.pending > 0} onClick={() => { void segarkanDataBelajar() }} className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold disabled:opacity-50">Muat ulang data</button><button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white"><Download size={16} />Cetak / Simpan PDF</button></div>
+    <div className="flex flex-wrap justify-end gap-3 print:hidden"><button type="button" disabled={state.pending > 0} onClick={() => { void segarkanDataBelajar() }} className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold disabled:opacity-50">Muat ulang data</button><button type="button" disabled={state.pending > 0 || !!state.error} onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white disabled:opacity-50"><Download size={16} />Cetak / Simpan PDF</button></div>
   </div>
 }

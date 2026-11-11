@@ -3,7 +3,7 @@
 return [
     'host' => 'localhost',
     'port' => 3306,
-    'database' => 'multimedia_pembelajaran_simulasi',
+    'database' => 'Multimedia_Pembelajaran',
     'username' => 'app_pembelajaran',
     'password' => 'ISI_PASSWORD_DATABASE_SENDIRI',
 ];

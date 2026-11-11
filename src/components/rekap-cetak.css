@@ -1,0 +1,58 @@
+.rekap-print-document { display: none; }
+
+@media print {
+  @page { size: A4 portrait; margin: 14mm 15mm; }
+  body.rekap-print-active { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+  body.rekap-print-active > :not(.rekap-print-document) { display: none !important; }
+  body.rekap-print-active > .rekap-print-document {
+    display: block !important; width: 100%; max-width: none; margin: 0; padding: 0;
+    color: #172335; background: #fff; font-family: Arial, Helvetica, sans-serif;
+    font-size: 10pt; line-height: 1.4; print-color-adjust: exact; -webkit-print-color-adjust: exact;
+  }
+  .rekap-print-document *, .rekap-print-document *::before, .rekap-print-document *::after { box-sizing: border-box; }
+  .rekap-print-document p, .rekap-print-document h1, .rekap-print-document h2, .rekap-print-document dl, .rekap-print-document dd { margin: 0; }
+  .rp-heading { display: flex; align-items: center; gap: 8mm; padding-bottom: 4mm; border-bottom: 0.65mm solid #243c5c; break-inside: avoid; }
+  .rp-heading > div:last-child { flex: 1; }
+  .rp-heading h1 { font-size: 16pt; line-height: 1.2; font-weight: 700; margin: 1mm 0; letter-spacing: 0.1mm; }
+  .rp-heading p { font-size: 9pt; }
+  .rp-heading .rp-eyebrow { font-size: 8pt; font-weight: 700; letter-spacing: 0.15mm; color: #4a5b71; }
+  .rp-logo { position: relative; flex: 0 0 48mm; width: 48mm; height: 14mm; overflow: hidden; }
+  .rp-logo img { position: absolute; top: 50%; left: 0; width: 100%; height: auto; max-width: none; transform: translateY(-48%); }
+  .rp-identity { display: grid; grid-template-columns: 1fr 1fr; gap: 1mm 8mm; margin-top: 4mm !important; padding: 3mm; border: 0.25mm solid #cbd3dd; border-radius: 1mm; break-inside: avoid; }
+  .rp-identity div { min-width: 0; }
+  .rp-identity dt { font-size: 8pt; color: #4d5c70; }
+  .rp-identity dd { font-size: 10pt; font-weight: 700; overflow-wrap: anywhere; }
+  .rp-section { margin-top: 3.5mm; }
+  .rp-section h2 { margin-bottom: 2mm; font-size: 10.5pt; font-weight: 700; break-after: avoid; }
+  .rp-summary { display: grid; grid-template-columns: repeat(4, 1fr); border: 0.25mm solid #cbd3dd; background: #f1f4f8; break-inside: avoid; }
+  .rp-summary > div { padding: 2.5mm; border-left: 0.25mm solid #cbd3dd; }
+  .rp-summary > div:first-child { border-left: 0; }
+  .rp-summary span { display: block; font-size: 8pt; }
+  .rp-summary strong { display: block; margin-top: 1mm; font-size: 17pt; font-weight: 700; }
+  .rp-summary small { font-size: 10pt; font-weight: 400; }
+  .rekap-print-document .rp-note { margin-top: 1.5mm; font-size: 7.7pt; line-height: 1.35; color: #4a5769; }
+  .rp-table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: 8.5pt; line-height: 1.3; }
+  .rp-table th, .rp-table td { padding: 1.6mm; border: 0.25mm solid #b6c2d1; vertical-align: middle; text-align: left; overflow-wrap: anywhere; }
+  .rp-table th { font-size: 8pt; font-weight: 700; background: #eaf0f6; }
+  .rp-table thead { display: table-header-group; }
+  .rp-table tr { break-inside: avoid; page-break-inside: avoid; }
+  .rp-table small { font-size: 7.5pt; color: #4a5769; }
+  .rp-table .rp-center { text-align: center; }
+  .rp-block { display: block; }
+  .rp-answer-summary { break-inside: avoid; }
+  .rp-answer-summary > p { font-size: 9pt; }
+  .rp-last-sections { break-inside: avoid; page-break-inside: avoid; }
+  .rp-last-sections.rp-next-page { break-before: page; page-break-before: always; }
+  .rp-continuation { padding-bottom: 2mm; margin-bottom: 3mm !important; border-bottom: 0.25mm solid #cbd3dd; font-size: 8pt; color: #4a5769; }
+  .rp-next-page .rp-history { margin-top: 0; }
+  .rp-history .rp-history-note { margin: 0 0 2.5mm; }
+  .rp-closing { margin-top: 3mm; break-inside: avoid; page-break-inside: avoid; }
+  .rp-verification { font-size: 7.7pt; color: #4a5769; border-top: 0.25mm solid #cbd3dd; padding-top: 2mm; }
+  .rp-signatures { display: grid; grid-template-columns: 1fr 1fr; text-align: center; gap: 14mm; margin-top: 3mm; font-size: 9pt; }
+  .rp-signatures > div { min-width: 0; overflow-wrap: anywhere; }
+  .rp-signatures strong { display: block; text-decoration: underline; }
+  .rp-sign-space { height: 9mm; }
+  .rp-signatures > div:first-child .rp-sign-space { height: 13mm; }
+  .rp-signatures span { color: #4a5769; }
+  .rp-footer { margin-top: 2mm; padding-top: 2mm; border-top: 0.25mm solid #cbd3dd; font-size: 7.5pt; color: #4a5769; }
+}
