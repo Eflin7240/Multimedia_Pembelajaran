@@ -1,36 +1,14 @@
+import { lihatDataBelajar, simpanFaseAkun } from './dataBelajar'
 export type Fase = 'konseptual' | 'interaktif' | 'evaluasi'
 export type StatusModul = Partial<Record<Fase, boolean>>
-
-const KEY = 'basisdata-progres'
-
-function bacaSemua(): Record<string, StatusModul> {
-  try {
-    const raw = localStorage.getItem(KEY)
-    return raw ? JSON.parse(raw) : {}
-  } catch {
-    return {}
-  }
-}
-
 export function statusModul(modulId: string): StatusModul {
-  return bacaSemua()[modulId] ?? {}
+  const m = lihatDataBelajar().data.modul[modulId]
+  return m ? { konseptual: m.konseptual, interaktif: m.interaktif, evaluasi: m.evaluasi } : {}
 }
-
 export function tandaiSelesai(modulId: string, fase: Fase) {
-  const semua = bacaSemua()
-  semua[modulId] = { ...semua[modulId], [fase]: true }
-  try {
-    localStorage.setItem(KEY, JSON.stringify(semua))
-  } catch {
-    // abaikan jika penyimpanan penuh atau diblokir
-  }
+  if (fase !== 'evaluasi') simpanFaseAkun(modulId, fase)
 }
-
 export function hitungProgres(status: StatusModul, fase: Fase[]) {
-  const selesai = fase.filter((f) => status[f]).length
-  return {
-    selesai,
-    total: fase.length,
-    persen: fase.length ? Math.round((selesai / fase.length) * 100) : 0,
-  }
+  const selesai = fase.filter(f => status[f]).length
+  return { selesai, total: fase.length, persen: fase.length ? Math.round(selesai / fase.length * 100) : 0 }
 }

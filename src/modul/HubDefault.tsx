@@ -11,8 +11,10 @@ import { alasanTerkunci } from '../lib/akses'
 import { bintangModul, skorTerbaik } from '../lib/bintang'
 import { hitungProgres, statusModul, type Fase } from '../lib/progres'
 import { sudahLihatTujuan, tandaiLihatTujuan } from '../lib/tujuan'
+import { useDataBelajar } from '../lib/useDataBelajar'
 
 export default function HubDefault({ id }: { id: string }) {
+  useDataBelajar()
   const modul = daftarModul.find((m) => m.id === id)
   const detail = detailModul[id]
   const lokasi = useLocation()

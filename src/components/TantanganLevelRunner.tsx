@@ -39,7 +39,9 @@ export default function TantanganLevelRunner({ level, tutup }: { level: LevelId;
   const [sibuk, setSibuk] = useState(false)
   const [error, setError] = useState('')
   const [ulasan, setUlasan] = useState(false)
-  const [hasil, setHasil] = useState<ReturnType<typeof selesaikanLevel>>(null)
+  const [hasil, setHasil] = useState<Awaited<ReturnType<typeof selesaikanLevel>>>(null)
+  const [menyimpan, setMenyimpan] = useState(false)
+  const [attemptId, setAttemptId] = useState(() => crypto.randomUUID())
   const [mulai, setMulai] = useState(() => Date.now())
   const catatan = useRef<Record<string, JawabanTantangan>>({})
   const memeriksa = useRef(false)
@@ -68,16 +70,21 @@ export default function TantanganLevelRunner({ level, tutup }: { level: LevelId;
     else if (nomor > 0) judulSoal.current?.focus({ preventScroll: true })
   }, [nomor, ulasan, kasus.id])
 
-  function simpanHasil(semua: Record<string, JawabanTantangan>, waktuSelesai: number) {
-    const data = selesaikanLevel(level, identitas, kasus, semua, Math.max(0, Math.floor((waktuSelesai - mulai) / 1000)))
+  async function simpanHasil(semua: Record<string, JawabanTantangan>, waktuSelesai: number) {
+    setMenyimpan(true)
+    try {
+    const data = await selesaikanLevel(level, identitas, kasus, semua, Math.max(0, Math.floor((waktuSelesai - mulai) / 1000)), attemptId)
     if (!data) { setError('Hasil belum dapat disimpan. Periksa syarat bintang/poin modul, lalu tekan Simpan hasil lagi.'); return }
     setHasil(data)
+    setJawaban(data.catatan)
     simpanHasilKuis({
       kuisId: `tantangan-${level}`, modulJudul: `Tantangan ${info.nama} — ${kasus.konteks.judul}`, tingkat: level,
       namaSiswa: user?.nama ?? null, kelas: user?.kelas ?? null, nilaiTotal: data.hasil.nilai, kkm: 75,
       lulus: data.hasil.nilai >= 75, jumlahBenar: data.hasil.benar, jumlahSalah: total - data.hasil.benar,
       totalSoal: total, durasiDetik: data.hasil.durasiDetik, selesaiPada: data.hasil.selesaiPada,
     })
+    } catch (e) { if (hidup.current) setError(e instanceof Error ? e.message : 'Hasil belum tersimpan ke akun.') }
+    finally { if (hidup.current) setMenyimpan(false) }
   }
 
   function catat(id: string, baru: JawabanTantangan) {
@@ -91,7 +98,7 @@ export default function TantanganLevelRunner({ level, tutup }: { level: LevelId;
       if (!hidup.current) return
       if (nomor === total - 1) {
         berakhir.current = Date.now()
-        setUlasan(true); simpanHasil(semua, berakhir.current)
+        setUlasan(true); void simpanHasil(semua, berakhir.current)
       }
       else { setNomor(nomor + 1); setError('') }
     }, JEDA_PINDAH_MS)
@@ -112,9 +119,10 @@ export default function TantanganLevelRunner({ level, tutup }: { level: LevelId;
   }
 
   function ulang() {
-    if (memeriksa.current) return
+    if (memeriksa.current || menyimpan) return
     if (timer.current !== null) window.clearTimeout(timer.current)
     timer.current = null; catatan.current = {}; berakhir.current = 0
+    setAttemptId(crypto.randomUUID())
     setKasus(pilihKasusLevel(level, identitas, kasus.id)); setNomor(0); setJawaban({}); setTeks({}); setHasil(null); setUlasan(false); setError(''); setMulai(Date.now())
   }
 
@@ -129,7 +137,8 @@ export default function TantanganLevelRunner({ level, tutup }: { level: LevelId;
     {ulasan ? <>
       <section className={`${panel} text-center`} aria-labelledby="judul-hasil">
         <Trophy size={36} className="mx-auto text-primary" /><h2 id="judul-hasil" className="mt-3 text-2xl font-extrabold">Tantangan {info.nama} selesai!</h2>
-        <p className="mt-3 text-4xl font-extrabold text-primary">{nilai}/100</p><p className="mt-2 text-sm text-slate-600">{benar} benar · {total - benar} salah · {total} soal</p>
+        <p role="status" className="mt-2 text-sm text-primary">{menyimpan ? 'Memeriksa dan menyimpan hasil akun…' : hasil ? 'Hasil tersimpan di database.' : 'Hasil belum tersimpan.'}</p>
+        <p className="mt-3 text-4xl font-extrabold text-primary">{hasil?.hasil.nilai ?? nilai}/100</p><p className="mt-2 text-sm text-slate-600">{benar} benar · {total - benar} salah · {total} soal</p>
         {hasil && <p className="mt-2 text-sm font-semibold text-primary">Nilai terbaik: {hasil.hasil.terbaik}/100</p>}
         <p className="mt-2 text-xs text-slate-500">Semua soal berbobot sama. Hasil ini tidak menambah bintang atau poin syarat akses.</p>
         {hasil && !hasil.tersimpan && <p role="alert" className="mt-3 text-sm text-danger">Browser menolak penyimpanan. Hasil hanya tersedia selama kunjungan ini.</p>}
@@ -137,8 +146,8 @@ export default function TantanganLevelRunner({ level, tutup }: { level: LevelId;
       <StudiKasus kasus={kasus} />
       <TantanganLevelReview kasus={kasus} jawaban={jawaban} />
       <div className={`${panel} flex flex-wrap justify-center gap-3`}>
-        {!hasil && <button type="button" onClick={() => { setError(''); simpanHasil(catatan.current, berakhir.current) }} className={aksi}>Simpan hasil lagi</button>}
-        <button type="button" onClick={ulang} className={aksi}>Coba studi kasus lain</button>
+        {!hasil && <button type="button" disabled={menyimpan} onClick={() => { setError(''); void simpanHasil(catatan.current, berakhir.current) }} className={aksi}>Simpan hasil lagi</button>}
+        <button type="button" disabled={menyimpan} onClick={ulang} className={aksi}>Coba studi kasus lain</button>
         {tutup ? <button type="button" onClick={tutup} className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold">Tutup hasil</button> : <Link to="/kuis" className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold">Kembali ke pilihan level</Link>}
       </div>
     </> : <div className="space-y-4">
