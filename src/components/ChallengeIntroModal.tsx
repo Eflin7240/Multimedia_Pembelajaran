@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import Modal from './Modal'
 import Bintang from './Bintang'
 import Ilustrasi from './Ilustrasi'
-import { daftarChallenge } from '../data/challenge'
+import { daftarChallenge } from '../data/kuis/index'
 import { AMBANG_BINTANG, hitungBintang, skorTerbaik } from '../lib/bintang'
 import { useDataBelajar } from '../lib/useDataBelajar'
 

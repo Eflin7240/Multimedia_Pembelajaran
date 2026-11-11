@@ -147,9 +147,11 @@ export default function SimulasiModul04() {
 
   const duplikasiBaris = (index: number) => {
     const targetRow = rows[index]
+    let nomor = rows.length + 1
+    while (rows.some((row) => row.id === `r-${nomor}`)) nomor += 1
     const newRow: Row1NF = {
       ...targetRow,
-      id: `r-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
+      id: `r-${nomor}`,
     }
     const updated = [...rows]
     updated.splice(index + 1, 0, newRow)
@@ -164,8 +166,10 @@ export default function SimulasiModul04() {
   // --- OPSI SCHEME BUILDER TABEL MANDIRI ---
   const tambahTabelBaru = () => {
     if (!newTableNameInput.trim()) return
+    let nomor = userTables.length + 1
+    while (userTables.some((table) => table.id === `tbl-${nomor}`)) nomor += 1
     const newTbl: UserTable = {
-      id: `tbl-${Date.now()}`,
+      id: `tbl-${nomor}`,
       name: newTableNameInput.trim().toLowerCase().replace(/\s+/g, '_'),
       columns: [],
       pk: null,
