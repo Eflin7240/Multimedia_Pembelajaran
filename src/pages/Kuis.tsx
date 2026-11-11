@@ -1,4 +1,4 @@
-import { useState, useSyncExternalStore } from 'react'
+import { useCallback, useState, useSyncExternalStore } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowRight, BookOpen, CheckCircle2, LockKeyhole, Star, Trophy } from 'lucide-react'
 import { levelIds, levelInfo, type LevelId } from '../data/levelTantangan'
@@ -6,6 +6,7 @@ import { bacaRiwayat, bolehAkses, identitasLevel, langgananCapaian, levelValid, 
 import { useAuth } from '../context/useAuth'
 import Modal from '../components/Modal'
 import TantanganLevelRunner from '../components/TantanganLevelRunner'
+import TantanganLevelDialog from '../components/TantanganLevelDialog'
 
 const panel = 'rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6'
 const aksi = 'inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50'
@@ -23,26 +24,14 @@ export default function Kuis() {
   const capaian = JSON.parse(useSyncExternalStore(langgananCapaian, snapshotCapaian, () => '{"bintang":0,"poin":0}')) as CapaianModul
   const [pilihan, setPilihan] = useState<LevelId | null>(null)
   const [syarat, setSyarat] = useState(false)
+  const [aktif, setAktif] = useState<LevelId | null>(null)
   const riwayat = bacaRiwayat(identitas)
-
-  if (id) {
-    if (!levelValid(id)) return <section className={panel}>
-      <h1 className="text-2xl font-bold">Pilih level tantangan</h1>
-      <p className="mt-3 text-sm text-slate-600">Tantangan sekarang terdiri dari Easy, Medium, dan Hard.</p>
-      <Link to="/kuis" className={`mt-5 ${aksi}`}>Lihat pilihan level</Link>
-    </section>
-    if (!bolehAkses(id, capaian)) {
-      const info = levelInfo[id]
-      return <section className={`${panel} mx-auto max-w-xl text-center`}>
-        <LockKeyhole size={36} className="mx-auto text-primary" />
-        <h1 className="mt-4 text-2xl font-extrabold">Tantangan {info.nama} masih terkunci</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-600">Kumpulkan minimal <strong>{info.bintang} bintang dan {info.poin} poin</strong> dari kuis modul untuk membuka level ini.</p>
-        <p className="mt-3 rounded-xl bg-surface p-4 font-semibold text-primary">Capaian saat ini: {capaian.bintang} bintang · {capaian.poin} poin</p>
-        <div className="mt-5 flex flex-wrap justify-center gap-3"><Link to="/modul" className={aksi}>Buka modul</Link><Link to="/kuis" className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold">Kembali</Link></div>
-      </section>
-    }
-    return <TantanganLevelRunner key={`${identitas}:${id}`} level={id} />
-  }
+  // URL lama tetap didukung, tetapi isinya juga ditampilkan di atas daftar level.
+  const levelAktif = aktif ?? (id && levelValid(id) ? id : null)
+  const tutupSoal = useCallback(() => {
+    setAktif(null)
+    if (id) navigate('/kuis', { replace: true })
+  }, [id, navigate])
 
   return <div className="space-y-6">
     <header className={panel}>
@@ -69,7 +58,7 @@ export default function Kuis() {
           <div className={`mt-5 rounded-xl border p-4 ${warna[level].panel}`}><p className="flex items-center gap-2 text-sm font-bold"><Star size={16} className="text-amber-500" />{info.bintang} Bintang</p><p className="mt-1 text-xs text-slate-500">Minimal {info.poin} Poin Modul</p></div>
           <ul className="my-5 space-y-2 text-sm text-slate-600"><li>• {info.pg + info.praktik} soal dari satu studi kasus</li><li>• {info.pg} pilihan ganda + {info.praktik} praktik</li><li>• 3 variasi kasus, dipilih acak</li></ul>
           {hasil && <p className="mb-4 text-sm font-semibold text-success">Nilai terbaik: {hasil.terbaik}/100</p>}
-          <button type="button" onClick={() => setPilihan(level)} aria-haspopup="dialog" className={`mt-auto ${buka ? aksi : 'inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-600'}`}>{buka ? <>Buka Tantangan <ArrowRight size={16} /></> : <><LockKeyhole size={16} />Lihat Syarat Akses</>}</button>
+          <button id={`buka-level-${level}`} type="button" onClick={() => setPilihan(level)} aria-haspopup="dialog" className={`mt-auto ${buka ? aksi : 'inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-600'}`}>{buka ? <>Buka Tantangan <ArrowRight size={16} /></> : <><LockKeyhole size={16} />Lihat Syarat Akses</>}</button>
         </section>
       })}
     </div>
@@ -92,13 +81,22 @@ export default function Kuis() {
     {pilihan && <Modal buka={true} tutup={() => setPilihan(null)} lebar="max-w-xl">
       <p className={`text-xs font-bold ${warna[pilihan].teks}`}>TANTANGAN {levelInfo[pilihan].nama.toUpperCase()}</p>
       <h2 className="mt-2 pr-6 text-2xl font-extrabold">{levelInfo[pilihan].label}</h2>
-      <p className="mt-3 text-sm leading-7 text-slate-600">Satu studi kasus acak dengan {levelInfo[pilihan].pg} soal pilihan ganda dan {levelInfo[pilihan].praktik} soal praktik. Studi kasus dan seluruh soal baru muncul setelah kamu membuka tantangan.</p>
+      <p className="mt-3 text-sm leading-7 text-slate-600">Satu studi kasus acak dengan {levelInfo[pilihan].pg} soal pilihan ganda dan {levelInfo[pilihan].praktik} soal praktik. Studi kasus dan data pendukung berada di atas, diikuti satu soal dan jawabannya. Setelah jawaban diperiksa, soal berikutnya muncul otomatis.</p>
       <p className="mt-3 text-sm text-slate-600">Syarat: <strong>{levelInfo[pilihan].bintang} bintang + {levelInfo[pilihan].poin} poin modul</strong>. Capaianmu: {capaian.bintang} bintang + {capaian.poin} poin.</p>
-      <p className="mt-3 text-xs leading-6 text-slate-500">Pembukaan berikutnya mendapat kasus berbeda dari kasus terakhir. Jawaban langsung dibahas dan dikunci setelah diperiksa.</p>
+      <p className="mt-3 text-xs leading-6 text-slate-500">Jawaban dikunci setelah diperiksa. Nilai, seluruh jawabanmu, dan pembahasan lengkap tampil setelah soal terakhir. Pembukaan berikutnya mendapat kasus berbeda dari kasus terakhir.</p>
       <div className="mt-5 flex flex-wrap gap-3"><button type="button" onClick={() => setPilihan(null)} className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold">Nanti dulu</button>
-        {bolehAkses(pilihan, capaian) ? <button type="button" className={aksi} onClick={() => { const level = pilihan; setPilihan(null); navigate(`/kuis/${level}`) }}>Buka tantangan<ArrowRight size={16} /></button>
+        {bolehAkses(pilihan, capaian) ? <button type="button" className={aksi} onClick={() => { setAktif(pilihan); setPilihan(null) }}>Lanjut<ArrowRight size={16} /></button>
           : <Link to="/modul" className={aksi} onClick={() => setPilihan(null)}><BookOpen size={16} />Kumpulkan capaian dari modul</Link>}
       </div>
     </Modal>}
+    {levelAktif && <TantanganLevelDialog key={`${identitas}:${levelAktif}`} judul={`Tantangan ${levelInfo[levelAktif].nama}`} tutup={tutupSoal} pemicuId={`buka-level-${levelAktif}`}>
+      {bolehAkses(levelAktif, capaian) ? <TantanganLevelRunner level={levelAktif} tutup={tutupSoal} />
+        : <section className={`${panel} mx-auto max-w-xl text-center`}>
+          <LockKeyhole size={36} className="mx-auto text-primary" /><h2 className="mt-4 text-2xl font-extrabold">Level masih terkunci</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">Kumpulkan minimal {levelInfo[levelAktif].bintang} bintang dan {levelInfo[levelAktif].poin} poin dari kuis modul.</p>
+          <p className="mt-3 text-sm font-semibold text-primary">Capaianmu: {capaian.bintang} bintang · {capaian.poin} poin</p>
+          <button type="button" onClick={tutupSoal} className={`mt-5 ${aksi}`}>Kembali ke pilihan level</button>
+        </section>}
+    </TantanganLevelDialog>}
   </div>
 }
