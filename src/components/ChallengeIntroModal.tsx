@@ -89,7 +89,7 @@ export default function ChallengeIntroModal({ buka, tutup, modulId, judulModul, 
               }}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-semibold text-white hover:bg-blue-700"
             >
-              {terbaik === null ? 'Mulai Challenge' : 'Coba Lagi'} <ArrowRight size={16} />
+              {terbaik === null ? 'Mulai Kuis' : 'Coba Lagi'} <ArrowRight size={16} />
             </button>
           </div>
         </>
