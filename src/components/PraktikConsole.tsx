@@ -34,9 +34,9 @@ export default function PraktikConsole({ nilai, ubah, periksa, sibuk, terkunci, 
             if (!nonaktif && nilai.trim()) periksa()
           }
         }}
-        rows={8} spellCheck={false} autoCapitalize="off" autoCorrect="off"
+        rows={6} spellCheck={false} autoCapitalize="off" autoCorrect="off"
         placeholder={sql ? 'Tulis kueri SELECT kamu di sini…' : mysql ? 'Tulis perintah MySQL kamu di sini…' : 'Tulis jawaban praktik kamu di sini…'}
-        className="block min-h-48 w-full resize-y bg-transparent px-4 py-3 font-mono text-sm leading-7 text-slate-100 caret-white outline-none placeholder:text-slate-500 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary disabled:opacity-75" />
+        className="block min-h-40 w-full resize-y bg-transparent px-4 py-3 font-mono text-[13px] leading-6 text-slate-100 caret-white outline-none placeholder:text-slate-500 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary disabled:opacity-75 sm:text-sm" />
       <div className="flex flex-wrap items-center gap-2 border-t border-slate-700 px-4 py-3">
         <button type="submit" disabled={nonaktif || !nilai.trim()} className="inline-flex items-center gap-2 rounded-lg bg-success px-4 py-2 text-sm font-semibold text-white hover:bg-success/90 disabled:cursor-not-allowed disabled:opacity-50"><Play size={15} />{sibuk ? 'Memeriksa…' : sql ? 'Jalankan Kueri' : 'Periksa Jawaban'}</button>
         <button type="button" onClick={() => ubah('')} disabled={nonaktif || !nilai} className="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-secondary hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"><RotateCcw size={15} />{sql || mysql ? 'Reset Kueri' : 'Reset Jawaban'}</button>
