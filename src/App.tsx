@@ -25,6 +25,7 @@ export default function App() {
         <Route path="/simulasi/:id" element={<Simulasi />} />
 
         <Route path="/kuis" element={<Kuis />} />
+        <Route path="/kuis/:id" element={<Kuis />} />
         <Route path="/challenge/:id" element={<Challenge />} />
 
         <Route path="/rekap" element={<RekapHasilPage />} />
