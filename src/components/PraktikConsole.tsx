@@ -1,4 +1,5 @@
 import { Play, RotateCcw } from 'lucide-react'
+import { useId } from 'react'
 import type { QueryExecResult } from 'sql.js'
 
 type Props = {
@@ -10,9 +11,11 @@ type Props = {
   sql: boolean
   mysql?: boolean
   tabel?: QueryExecResult[]
+  nomor?: number
 }
 
-export default function PraktikConsole({ nilai, ubah, periksa, sibuk, terkunci, sql, mysql, tabel }: Props) {
+export default function PraktikConsole({ nilai, ubah, periksa, sibuk, terkunci, sql, mysql, tabel, nomor }: Props) {
+  const inputId = useId()
   const nonaktif = sibuk || terkunci
   return <div className="mt-4 min-w-0 space-y-4">
     <form className="overflow-hidden rounded-2xl border border-slate-700 bg-editor shadow-sm" onSubmit={e => { e.preventDefault(); if (!nonaktif && nilai.trim()) periksa() }}>
@@ -23,8 +26,8 @@ export default function PraktikConsole({ nilai, ubah, periksa, sibuk, terkunci, 
         </div>
         <span>UTF-8{sql ? ' • Dialect: SQLite' : mysql ? ' • Sintaks: MySQL' : ' • Jawaban singkat'}</span>
       </div>
-      <label htmlFor="jawaban-praktik" className="sr-only">{sql || mysql ? 'Kueri jawaban nomor 10' : 'Jawaban praktik nomor 10'}</label>
-      <textarea id="jawaban-praktik" value={nilai} onChange={e => ubah(e.target.value)} disabled={nonaktif}
+      <label htmlFor={inputId} className="sr-only">{sql || mysql ? 'Kueri jawaban' : 'Jawaban praktik'}{nomor ? ` nomor ${nomor}` : ''}</label>
+      <textarea id={inputId} value={nilai} onChange={e => ubah(e.target.value)} disabled={nonaktif}
         onKeyDown={e => {
           if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
             e.preventDefault()

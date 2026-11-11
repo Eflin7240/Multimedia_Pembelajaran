@@ -1,204 +1,104 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { CheckCircle2, LockKeyhole, Trophy, XCircle } from 'lucide-react'
-import { daftarModul } from '../data/modul'
-import { urutanTantangan, type TahapId } from '../data/tantangan'
+import { useState, useSyncExternalStore } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ArrowRight, BookOpen, CheckCircle2, LockKeyhole, Star, Trophy } from 'lucide-react'
+import { levelIds, levelInfo, type LevelId } from '../data/levelTantangan'
+import { bacaRiwayat, bolehAkses, identitasLevel, langgananCapaian, levelValid, snapshotCapaian, type CapaianModul } from '../lib/levelTantangan'
 import { useAuth } from '../context/useAuth'
-import { bacaProgres, identitasTantangan, ingatKasus, normalkanJawaban, pilihKasus, selesaikanTahap, tahapTerbuka, tahapValid } from '../lib/tantangan'
-import { simpanHasilKuis } from '../lib/kuis'
-import ChallengeIntroModal from '../components/ChallengeIntroModal'
-import PraktikConsole from '../components/PraktikConsole'
-import type { QueryExecResult } from 'sql.js'
+import Modal from '../components/Modal'
+import TantanganLevelRunner from '../components/TantanganLevelRunner'
 
 const panel = 'rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6'
-const aksi = 'rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50'
-const judul = (id: TahapId) => id === 'eval-kasus' ? 'Eval Kasus' : `Modul ${Number(id.slice(-2))}`
-type Jawaban = { benar: boolean; pilihan?: number; pesan?: string; tabel?: QueryExecResult[] }
-
-function Pengerjaan({ id, identitas }: { id: TahapId; identitas: string }) {
-  const { user } = useAuth()
-  const [kasus, setKasus] = useState(() => pilihKasus(id, identitas))
-  const [jawaban, setJawaban] = useState<Record<number, Jawaban>>({})
-  const [teks, setTeks] = useState('')
-  const [sibuk, setSibuk] = useState(false)
-  const [error, setError] = useState('')
-  const [peringatan, setPeringatan] = useState('')
-  const [hasil, setHasil] = useState<ReturnType<typeof selesaikanTahap>>(null)
-  const [mulai, setMulai] = useState(() => Date.now())
-  const kunciJawaban = useRef(new Set<number>())
-  const sedangMemeriksa = useRef(false)
-  const generasi = useRef(0)
-  const jumlah = Object.keys(jawaban).length
-  const skor = Object.values(jawaban).filter(x => x.benar).length * 10
-  const berikut = urutanTantangan[urutanTantangan.indexOf(id) + 1]
-
-  useEffect(() => {
-    ingatKasus(id, identitas, kasus.id)
-  }, [id, identitas, kasus.id])
-
-  function catat(i: number, jawabanBaru: Jawaban) {
-    if (kunciJawaban.current.has(i)) return
-    kunciJawaban.current.add(i)
-    setJawaban(lama => ({ ...lama, [i]: jawabanBaru }))
-  }
-
-  async function periksaPraktik(i: number) {
-    const soal = kasus.soal[i]
-    if (soal.jenis !== 'praktik' || kunciJawaban.current.has(i) || sedangMemeriksa.current || !teks.trim()) return
-    sedangMemeriksa.current = true
-    setSibuk(true)
-    setError('')
-    const sesi = generasi.current
-    try {
-      let hasilPraktik: Jawaban
-      if (soal.sql) {
-        const { periksaSql } = await import('../lib/tantanganSql')
-        hasilPraktik = await periksaSql(teks, soal.sql.tabel, soal.sql.batas)
-      } else {
-        hasilPraktik = { benar: soal.jawaban.some(x => normalkanJawaban(x) === normalkanJawaban(teks)) }
-      }
-      if (sesi === generasi.current) catat(i, hasilPraktik)
-    } catch (e) {
-      if (sesi === generasi.current) setError(e instanceof Error ? e.message : 'Pemeriksaan gagal. Silakan coba lagi.')
-    } finally {
-      sedangMemeriksa.current = false
-      setSibuk(false)
-    }
-  }
-
-  function selesai() {
-    if (jumlah !== 10 || hasil) return
-    const data = selesaikanTahap(id, identitas, kasus.id, Object.values(jawaban))
-    if (!data) { setError('Tahap belum dapat diselesaikan. Periksa urutan tantangan.'); return }
-    setHasil(data)
-    if (!data.tersimpan) setPeringatan('Hasil belum tersimpan permanen. Progres tersedia dalam memori selama kunjungan ini.')
-    simpanHasilKuis({
-      kuisId: id, modulJudul: `${judul(id)} — ${kasus.judul}`, tingkat: 'medium',
-      namaSiswa: user?.nama ?? null, kelas: user?.kelas ?? null, nilaiTotal: skor,
-      kkm: 75, lulus: skor >= 75, jumlahBenar: skor / 10, jumlahSalah: 10 - skor / 10,
-      totalSoal: 10, durasiDetik: Math.floor((Date.now() - mulai) / 1000), selesaiPada: data.hasil.waktu,
-    })
-  }
-
-  function ulangi() {
-    generasi.current++
-    setKasus(pilihKasus(id, identitas, kasus.id))
-    setJawaban({}); kunciJawaban.current.clear(); setTeks(''); setHasil(null); setError(''); setMulai(Date.now())
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  return <div className="mx-auto max-w-3xl space-y-5">
-    <header className={panel}>
-      <Link to="/kuis" className="text-sm font-semibold text-primary hover:underline">← Daftar tantangan</Link>
-      <p className="mt-4 text-xs font-bold tracking-wide text-primary">{judul(id).toUpperCase()} · STUDI KASUS ACAK</p>
-      <h1 className="mt-1 text-2xl font-extrabold">{kasus.judul}</h1>
-      <p className="mt-2 text-sm text-slate-600">10 soal · 10 poin per soal · Jawaban dikunci setelah diperiksa.</p>
-    </header>
-    {peringatan && <p role="alert" className="rounded-xl border border-danger bg-white p-4 text-sm text-danger">{peringatan}</p>}
-    <section className={panel} aria-labelledby="judul-kasus">
-      <h2 id="judul-kasus" className="text-lg font-bold">Baca studi kasus</h2>
-      <p className="mt-3 text-sm leading-7 text-slate-700">{kasus.cerita}</p>
-      <pre className="mt-4 overflow-x-auto rounded-xl bg-editor p-4 font-mono text-xs leading-6 text-white" tabIndex={0}>{kasus.skema}</pre>
-      <p className="mt-3 text-xs text-slate-500">PK = primary key, FK = foreign key. Nama tabel dan kolom mengikuti skema ini.</p>
-    </section>
-    <div className="sticky top-20 z-10 rounded-xl border border-slate-200 bg-white/95 p-4 shadow-sm" role="status">
-      <div className="flex flex-wrap justify-between gap-2 text-sm font-semibold"><span>{jumlah}/10 soal dikerjakan</span><span className="text-primary">Skor {skor}/100</span></div>
-      <progress className="mt-2 h-2 w-full accent-primary" value={jumlah} max={10} aria-label="Progres pengerjaan" />
-    </div>
-    {kasus.soal.map((soal, i) => {
-      const j = jawaban[i]
-      return <section key={`${kasus.id}-${i}`} className={panel} aria-labelledby={`soal-${i}`}>
-        <p className="text-xs font-bold text-primary">SOAL {i + 1} · {soal.jenis === 'pilihan' ? 'PILIHAN GANDA' : 'TANTANGAN LANGSUNG'}</p>
-        <h2 id={`soal-${i}`} className="mt-3 font-bold leading-7">{soal.pertanyaan}</h2>
-        {soal.jenis === 'pilihan' ? <div className="mt-4 space-y-2">
-          {soal.pilihan.map((opsi, opsiId) => {
-            const benar = !!j && opsiId === soal.benar
-            const salah = !!j && opsiId === j.pilihan && !j.benar
-            const gaya = benar ? 'border-success bg-success/10 text-success' : salah ? 'border-danger bg-danger/10 text-danger' : 'border-slate-200 enabled:hover:border-primary'
-            return <button key={opsiId} type="button" disabled={!!j} onClick={() => catat(i, { benar: opsiId === soal.benar, pilihan: opsiId })}
-              className={`flex w-full items-start gap-3 rounded-xl border-2 p-3 text-left text-sm focus-visible:outline-2 focus-visible:outline-primary ${gaya}`}>
-              <span className="shrink-0 font-bold">{String.fromCharCode(65 + opsiId)}.</span>
-              <span className="min-w-0 flex-1 break-words">{opsi}</span>
-              {benar && <CheckCircle2 size={18} className="shrink-0" aria-label="Jawaban benar" />}
-              {salah && <XCircle size={18} className="shrink-0" aria-label="Pilihanmu salah" />}
-            </button>
-          })}
-        </div> : <PraktikConsole nilai={teks} ubah={setTeks} periksa={() => { void periksaPraktik(i) }}
-          sibuk={sibuk} terkunci={!!j} sql={!!soal.sql} mysql={id === 'mod-02'} tabel={j?.tabel} />}
-        {j && <div role="status" className={`mt-4 rounded-xl p-4 text-sm ${j.benar ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'}`}>
-          <p className="font-bold">{j.benar ? 'Benar! +10 poin' : 'Belum tepat. +0 poin'}</p>
-          {soal.jenis === 'pilihan' && !j.benar && <p className="mt-1">Jawaban benar: {String.fromCharCode(65 + soal.benar)}. {soal.pilihan[soal.benar]}</p>}
-          {j.pesan && <p className="mt-1">{j.pesan}</p>}
-          {soal.jenis === 'praktik' && <p className="mt-1 break-words font-mono">Contoh jawaban: {soal.jawaban[0]}</p>}
-          <p className="mt-2">{soal.pembahasan}</p>
-        </div>}
-      </section>
-    })}
-    {error && <p role="alert" className="rounded-xl bg-danger/10 p-4 text-danger">{error}</p>}
-    <section className={`${panel} text-center`}>
-      {!hasil ? <>
-        <p className="mb-3 text-sm text-slate-600">Selesaikan seluruh soal, lalu simpan hasil untuk membuka tahap berikutnya. Nilai tidak membatasi akses.</p>
-        <button type="button" disabled={jumlah !== 10 || sibuk} onClick={selesai} className={aksi}>Selesaikan tahap & simpan hasil</button>
-      </> : <>
-        <Trophy className="mx-auto text-primary" size={36} />
-        <h2 className="mt-3 text-xl font-extrabold">{judul(id)} selesai!</h2>
-        <p className="mt-2 text-4xl font-extrabold text-primary">{skor}/100</p>
-        <p className="mt-2 text-sm text-slate-600">{skor >= 75 ? 'Sudah mencapai KKM 75.' : 'Belum mencapai KKM 75. Kamu boleh mengulang untuk latihan.'} Skor terbaik: {hasil.hasil.terbaik}.</p>
-        <p className="mt-2 text-sm font-semibold text-success">{berikut ? `${judul(berikut)} sudah terbuka.` : 'Semua tahap selesai. Kamu bebas membuka bagian mana pun.'}</p>
-        <div className="mt-5 flex flex-wrap justify-center gap-3">
-          {berikut && <Link to={`/kuis/${berikut}`} className={aksi}>Lanjut ke {judul(berikut)}</Link>}
-          <button type="button" onClick={ulangi} className="rounded-xl border border-primary px-5 py-3 text-sm font-semibold text-primary">Latihan dengan kasus lain</button>
-          <Link to="/kuis" className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold">Daftar tantangan</Link>
-        </div>
-      </>}
-    </section>
-  </div>
+const aksi = 'inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50'
+const warna = {
+  easy: { badge: 'bg-success text-white', panel: 'border-success/25 bg-success/5', teks: 'text-success' },
+  medium: { badge: 'bg-amber-500 text-white', panel: 'border-amber-300 bg-amber-50/50', teks: 'text-amber-700' },
+  hard: { badge: 'bg-danger text-white', panel: 'border-danger/25 bg-danger/5', teks: 'text-danger' },
 }
 
 export default function Kuis() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { user } = useAuth()
-  const [pilihanModul, setPilihanModul] = useState<TahapId | null>(null)
-  const identitas = identitasTantangan(user)
-  const p = bacaProgres(identitas)
+  const identitas = identitasLevel(user)
+  const capaian = JSON.parse(useSyncExternalStore(langgananCapaian, snapshotCapaian, () => '{"bintang":0,"poin":0}')) as CapaianModul
+  const [pilihan, setPilihan] = useState<LevelId | null>(null)
+  const [syarat, setSyarat] = useState(false)
+  const riwayat = bacaRiwayat(identitas)
+
   if (id) {
-    if (!tahapValid(id)) return <section className={panel}><h1 className="text-xl font-bold">Tantangan tidak ditemukan</h1><Link to="/kuis" className="mt-3 inline-block text-primary">Kembali ke daftar tantangan</Link></section>
-    if (!tahapTerbuka(id, p)) {
-      const pertama = urutanTantangan.find(x => !p.selesai[x]) ?? 'eval-kasus'
+    if (!levelValid(id)) return <section className={panel}>
+      <h1 className="text-2xl font-bold">Pilih level tantangan</h1>
+      <p className="mt-3 text-sm text-slate-600">Tantangan sekarang terdiri dari Easy, Medium, dan Hard.</p>
+      <Link to="/kuis" className={`mt-5 ${aksi}`}>Lihat pilihan level</Link>
+    </section>
+    if (!bolehAkses(id, capaian)) {
+      const info = levelInfo[id]
       return <section className={`${panel} mx-auto max-w-xl text-center`}>
-        <LockKeyhole className="mx-auto text-primary" size={32} />
-        <h1 className="mt-3 text-2xl font-bold">{judul(id)} masih terkunci</h1>
-        <p className="mt-3 text-sm text-slate-600">Kerjakan berurutan dari Eval Kasus sampai Modul 5. Selesaikan {judul(pertama)} terlebih dahulu.</p>
-        <Link to={`/kuis/${pertama}`} className={`mt-5 inline-block ${aksi}`}>Kerjakan {judul(pertama)}</Link>
+        <LockKeyhole size={36} className="mx-auto text-primary" />
+        <h1 className="mt-4 text-2xl font-extrabold">Tantangan {info.nama} masih terkunci</h1>
+        <p className="mt-3 text-sm leading-6 text-slate-600">Kumpulkan minimal <strong>{info.bintang} bintang dan {info.poin} poin</strong> dari kuis modul untuk membuka level ini.</p>
+        <p className="mt-3 rounded-xl bg-surface p-4 font-semibold text-primary">Capaian saat ini: {capaian.bintang} bintang · {capaian.poin} poin</p>
+        <div className="mt-5 flex flex-wrap justify-center gap-3"><Link to="/modul" className={aksi}>Buka modul</Link><Link to="/kuis" className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold">Kembali</Link></div>
       </section>
     }
-    return <Pengerjaan key={`${identitas}:${id}`} id={id} identitas={identitas} />
+    return <TantanganLevelRunner key={`${identitas}:${id}`} level={id} />
   }
-  const tuntas = urutanTantangan.filter(x => p.selesai[x]).length
-  return <div className="space-y-5">
+
+  return <div className="space-y-6">
     <header className={panel}>
-      <p className="text-xs font-bold tracking-wide text-primary">LATIHAN BASIS DATA</p>
-      <h1 className="mt-2 text-3xl font-extrabold">Tantangan Studi Kasus</h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Mulai dari Eval Kasus, lalu lanjutkan Modul 1–5 secara berurutan. Setiap bagian berisi studi kasus acak dan 10 soal. Cerita dan soal muncul setelah kamu memilih bagian.</p>
-      <p className="mt-3 text-sm font-semibold text-primary">{tuntas}/6 tahap selesai{tuntas === 6 ? ' · Semua bagian bebas diakses' : ''}</p>
-      <p className="mt-2 text-xs text-slate-500">{user ? `Progres: ${user.nama} · ${user.kelas}.` : 'Mode tamu. Masuk dengan nama dan kelas untuk memisahkan progres siswa.'} Progres tersimpan pada browser ini. Kasus yang sama tidak muncul dua kali berturut-turut; siswa berbeda masih dapat memperoleh kasus yang sama.</p>
+      <div className="flex flex-wrap items-start justify-between gap-5">
+        <div className="max-w-2xl"><p className="text-xs font-bold tracking-wide text-primary">UJI KEMAMPUAN BASIS DATA</p><h1 className="mt-2 text-3xl font-extrabold">Tantangan Studi Kasus</h1>
+          <p className="mt-3 text-sm leading-7 text-slate-600">Pilih Easy, Medium, atau Hard sesuai capaian kuis modulmu. Setiap sesi memuat satu studi kasus acak dan soal yang saling berkaitan, dari pilihan ganda sampai praktik langsung.</p>
+        </div>
+        <button type="button" onClick={() => setSyarat(true)} aria-haspopup="dialog" className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm font-semibold text-primary"><Trophy size={18} />Syarat akses</button>
+      </div>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <span className="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700"><Star size={18} />{capaian.bintang} Bintang</span>
+        <span className="rounded-xl bg-primary/5 px-4 py-3 text-sm font-bold text-primary">{capaian.poin} Poin Modul</span>
+      </div>
+      <p className="mt-3 text-xs leading-5 text-slate-500">Syarat akses memakai akumulasi capaian kuis modul. Bintang tidak dipotong. Kamu boleh langsung membuka level mana pun yang memenuhi syarat.</p>
     </header>
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {urutanTantangan.map((tahap, i) => {
-        const buka = tahapTerbuka(tahap, p)
-        const selesai = p.selesai[tahap]
-        const isi = <>
-          <div className="flex items-center justify-between text-primary"><span className="text-xs font-bold">TAHAP {i + 1}</span>{selesai ? <CheckCircle2 size={22} className="text-success" /> : !buka ? <LockKeyhole size={22} /> : null}</div>
-          <h2 className="mt-4 text-xl font-extrabold">{judul(tahap)}</h2>
-          <p className="mt-2 text-sm text-slate-600">{daftarModul.find(m => m.id === tahap)?.judul}</p>
-          <p className="mt-4 text-xs text-slate-500">3 variasi kasus · 9 pilihan ganda + 1 praktik</p>
-          <p className={`mt-4 text-sm font-semibold ${selesai ? 'text-success' : 'text-primary'}`}>{selesai ? `Selesai · Terbaik ${selesai.terbaik}/100 · Buka lagi →` : buka ? 'Mulai tantangan →' : `Selesaikan ${judul(urutanTantangan[i - 1])} dahulu`}</p>
-        </>
-        return buka ? <button key={tahap} type="button" onClick={() => setPilihanModul(tahap)} aria-haspopup="dialog" className={`${panel} w-full text-left transition hover:border-primary focus-visible:outline-primary`}>{isi}</button>
-          : <div key={tahap} aria-disabled="true" className={`${panel} opacity-65`}>{isi}</div>
+    <div className="grid gap-5 lg:grid-cols-3">
+      {levelIds.map(level => {
+        const info = levelInfo[level]
+        const buka = bolehAkses(level, capaian)
+        const hasil = riwayat.hasil[level]
+        return <section key={level} className={`${panel} flex flex-col`}>
+          <div className="flex items-center justify-between"><span className={`rounded-lg px-3 py-1 text-xs font-extrabold ${warna[level].badge}`}>{info.nama.toUpperCase()}</span>{buka ? <CheckCircle2 className="text-success" size={22} /> : <LockKeyhole className="text-slate-400" size={22} />}</div>
+          <h2 className="mt-5 text-2xl font-extrabold">{info.label}</h2><p className="mt-2 text-sm text-slate-600">{info.topik}</p>
+          <div className={`mt-5 rounded-xl border p-4 ${warna[level].panel}`}><p className="flex items-center gap-2 text-sm font-bold"><Star size={16} className="text-amber-500" />{info.bintang} Bintang</p><p className="mt-1 text-xs text-slate-500">Minimal {info.poin} Poin Modul</p></div>
+          <ul className="my-5 space-y-2 text-sm text-slate-600"><li>• {info.pg + info.praktik} soal dari satu studi kasus</li><li>• {info.pg} pilihan ganda + {info.praktik} praktik</li><li>• 3 variasi kasus, dipilih acak</li></ul>
+          {hasil && <p className="mb-4 text-sm font-semibold text-success">Nilai terbaik: {hasil.terbaik}/100</p>}
+          <button type="button" onClick={() => setPilihan(level)} aria-haspopup="dialog" className={`mt-auto ${buka ? aksi : 'inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-600'}`}>{buka ? <>Buka Tantangan <ArrowRight size={16} /></> : <><LockKeyhole size={16} />Lihat Syarat Akses</>}</button>
+        </section>
       })}
     </div>
-    {pilihanModul && <ChallengeIntroModal buka={true} tutup={() => setPilihanModul(null)} modulId={pilihanModul}
-      judulModul={`${judul(pilihanModul)}: ${daftarModul.find(m => m.id === pilihanModul)?.judul ?? ''}`} kkm={75} />}
+    <p className="text-xs leading-6 text-slate-500">{user ? `${user.nama} · ${user.kelas}.` : 'Mode tamu.'} Riwayat tantangan tersimpan pada browser ini. Kasus berbeda dari pembukaan terakhir level yang sama; siswa yang berbeda masih bisa mendapat kasus yang sama.</p>
+
+    <Modal buka={syarat} tutup={() => setSyarat(false)} lebar="max-w-2xl">
+      <div className="flex items-start gap-3 pr-7"><span className="rounded-xl bg-amber-50 p-3 text-amber-600"><Trophy size={23} /></span><div><h2 className="text-xl font-extrabold">Syarat Akses Kuis & Tantangan</h2><p className="mt-1 text-xs text-slate-500">Ketentuan pembukaan level studi kasus</p></div></div>
+      <p className="mt-5 text-sm leading-6 text-slate-500">Kumpulkan bintang dan akumulasi poin dari kuis modul untuk membuka tingkat kesulitan tantangan.</p>
+      <div className="mt-4 space-y-3">{levelIds.map(level => {
+        const info = levelInfo[level]
+        return <div key={level} className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4 ${warna[level].panel}`}>
+          <div className="flex items-center gap-3"><span className={`rounded-lg px-2 py-1 text-xs font-bold ${warna[level].badge}`}>{info.nama.toUpperCase()}</span><div><p className="font-bold">{info.label}</p><p className="mt-1 text-xs text-slate-500">{info.topik}</p></div></div>
+          <div className="text-right"><p className="flex items-center gap-1 text-sm font-bold"><Star size={16} className="text-amber-500" />{info.bintang} Bintang</p><p className="mt-1 text-xs text-slate-500">Min. {info.poin} Poin</p></div>
+        </div>
+      })}</div>
+      <p className="mt-4 text-xs leading-5 text-slate-500">Kedua syarat harus terpenuhi. Bintang tidak dipakai sebagai biaya masuk. Tidak wajib menyelesaikan level lain terlebih dahulu.</p>
+      <div className="mt-5 flex justify-end"><button type="button" onClick={() => setSyarat(false)} className={aksi}>Tutup</button></div>
+    </Modal>
+
+    {pilihan && <Modal buka={true} tutup={() => setPilihan(null)} lebar="max-w-xl">
+      <p className={`text-xs font-bold ${warna[pilihan].teks}`}>TANTANGAN {levelInfo[pilihan].nama.toUpperCase()}</p>
+      <h2 className="mt-2 pr-6 text-2xl font-extrabold">{levelInfo[pilihan].label}</h2>
+      <p className="mt-3 text-sm leading-7 text-slate-600">Satu studi kasus acak dengan {levelInfo[pilihan].pg} soal pilihan ganda dan {levelInfo[pilihan].praktik} soal praktik. Studi kasus dan seluruh soal baru muncul setelah kamu membuka tantangan.</p>
+      <p className="mt-3 text-sm text-slate-600">Syarat: <strong>{levelInfo[pilihan].bintang} bintang + {levelInfo[pilihan].poin} poin modul</strong>. Capaianmu: {capaian.bintang} bintang + {capaian.poin} poin.</p>
+      <p className="mt-3 text-xs leading-6 text-slate-500">Pembukaan berikutnya mendapat kasus berbeda dari kasus terakhir. Jawaban langsung dibahas dan dikunci setelah diperiksa.</p>
+      <div className="mt-5 flex flex-wrap gap-3"><button type="button" onClick={() => setPilihan(null)} className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold">Nanti dulu</button>
+        {bolehAkses(pilihan, capaian) ? <button type="button" className={aksi} onClick={() => { const level = pilihan; setPilihan(null); navigate(`/kuis/${level}`) }}>Buka tantangan<ArrowRight size={16} /></button>
+          : <Link to="/modul" className={aksi} onClick={() => setPilihan(null)}><BookOpen size={16} />Kumpulkan capaian dari modul</Link>}
+      </div>
+    </Modal>}
   </div>
 }
