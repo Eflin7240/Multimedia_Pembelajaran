@@ -41,7 +41,7 @@ export const modul03: ModulDetail = {
       'Memahami arsitektur pemodelan data sebelum tabel dibuat secara fisik, menentukan atribut kunci yang unik, dan memetakan hubungan logis antar entitas.',
     kd: 'KD 3.3 Pemodelan Data Konseptual (ERD)',
     estimasiMenit: 25,
-    video: { youtubeId: '', durasi: '12:30' },
+    video: { youtubeId: 'LyfrTvsYTFE', durasi: '21:06' },
     intisari: {
       judul: 'Mengapa Harus Merancang ERD Sebelum Coding?',
       isi: 'Membuat basis data tanpa ERD ibarat membangun gedung tanpa cetak biru (blue-print). Entity Relationship Diagram (ERD) adalah diagram konseptual yang menggambarkan struktur logis data, entitas yang terlibat, serta aturan relasi antar entitas sebelum diimplementasikan ke dalam kode SQL.',

@@ -41,7 +41,7 @@ export const modul02: ModulDetail = {
       'Mempelajari landasan operasional dalam menjalankan database server RDBMS modern, mulai dari arsitektur layanan hingga eksekusi query langsung melalui Command Line Interface (CLI).',
     kd: 'KD 3.2 Utilitas & Tools Basis Data',
     estimasiMenit: 20,
-    video: { youtubeId: '', durasi: '10:15' },
+    video: { youtubeId: 'SWs0j2LzcD4', durasi: '11:07' },
     intisari: {
       judul: 'Bagaimana Aplikasi Berinteraksi dengan Database?',
       isi: 'Di balik aplikasi web dan mobile yang responsif, terdapat Database Engine seperti MySQL atau MariaDB yang siap memproses request data. Untuk mengelolanya, developer dapat memanfaatkan antarmuka grafis (GUI) seperti phpMyAdmin atau menggunakan terminal CLI langsung demi kecepatan dan kestabilan tinggi.',

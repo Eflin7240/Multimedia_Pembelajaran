@@ -36,7 +36,7 @@ export const modul04: ModulDetail = {
     deskripsi: 'Pelajari mengapa data pendaftaran mapel perlu dirapikan dan bagaimana aturan data menentukan pemisahan tabel.',
     kd: 'Basis Data • Fase F',
     estimasiMenit: 15,
-    video: { youtubeId: '', durasi: '—' },
+    video: { youtubeId: 'yHBNYhpONV0', durasi: '10:30' },
     intisari: {
       judul: 'Setiap fakta punya tempat',
       isi: 'Normalisasi mengatur data berdasarkan fakta yang dicatat. NIS menentukan nama dan kelas siswa. Pasangan NIS dan KodeMapel menentukan satu nilai pada contoh ini. Aturan seperti ini disebut ketergantungan fungsional dan menjadi dasar pemisahan tabel.',
