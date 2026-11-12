@@ -2,7 +2,7 @@ import type { Challenge } from './types'
 
 export const challenge04: Challenge = {
   modulId: 'mod-04',
-  judul: 'Challenge Normalisasi Data',
+  judul: 'Kuis Normalisasi Data',
   pengantar:
     'Gunakan aturan normalisasi untuk menganalisis kasus peminjaman alat praktik di bengkel RPL. Ada 10 soal, masing-masing bernilai 10 poin, dan jawabanmu langsung dibahas.',
   poinPerSoal: 10,

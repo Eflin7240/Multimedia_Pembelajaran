@@ -357,7 +357,7 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
           {gagalSimpan && <p role="alert" className="mt-2 text-sm text-danger">{gagalSimpan}</p>}
           {!tersimpan && <button type="button" disabled={menyimpan} onClick={() => { void simpan(catatan) }} className="mt-3 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{menyimpan ? 'Menyimpan…' : 'Coba simpan lagi'}</button>}
           <h2 className="mt-3 text-2xl font-extrabold">
-            {lulus ? 'Challenge Selesai!' : 'Challenge Selesai, Ayo Coba Lagi!'}
+            {lulus ? 'Kuis Selesai!' : 'Kuis Selesai, Ayo Coba Lagi!'}
           </h2>
 
           <p className="mt-4 text-5xl font-extrabold text-primary">
@@ -388,7 +388,7 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
               onClick={ulang}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
             >
-              <RotateCcw size={16} /> Ulangi Challenge
+              <RotateCcw size={16} /> Ulangi Kuis
             </button>
             <Link
               to={`/modul/${modulId}`}

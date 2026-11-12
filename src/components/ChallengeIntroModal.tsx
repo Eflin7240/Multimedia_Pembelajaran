@@ -35,7 +35,7 @@ export default function ChallengeIntroModal({ buka, tutup, modulId, judulModul, 
         </>
       ) : (
         <>
-          <p className="mt-3 text-center text-xs font-bold tracking-wide text-primary">CHALLENGE MODUL</p>
+          <p className="mt-3 text-center text-xs font-bold tracking-wide text-primary">KUIS MODUL</p>
           <h2 className="mt-1 text-center text-xl font-extrabold">{challenge.judul}</h2>
           <p className="text-center text-xs text-slate-500">{judulModul}</p>
           <p className="mt-3 text-sm text-slate-600">{challenge.pengantar}</p>

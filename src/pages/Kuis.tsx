@@ -34,18 +34,18 @@ export default function Kuis() {
   }, [id, navigate])
 
   return <div className="space-y-6">
-    <header className={panel}>
+    <header className={`${panel} rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm !bg-blue-300`}>
       <div className="flex flex-wrap items-start justify-between gap-5">
-        <div className="max-w-2xl"><p className="text-xs font-bold tracking-wide text-primary">UJI KEMAMPUAN BASIS DATA</p><h1 className="mt-2 text-3xl font-extrabold">Tantangan Studi Kasus</h1>
-          <p className="mt-3 text-sm leading-7 text-slate-600">Pilih Easy, Medium, atau Hard sesuai capaian kuis modulmu. Setiap sesi memuat satu studi kasus acak dan soal yang saling berkaitan, dari pilihan ganda sampai praktik langsung.</p>
+        <div className="max-w-2xl"><p className="text-xs font-bold tracking-wide text-black">UJI KEMAMPUAN BASIS DATA</p><h1 className="mt-2 text-3xl font-extrabold text-white">Tantangan Studi Kasus</h1>
+          <p className="mt-3 text-sm leading-6 text-slate-50">Pilih Easy, Medium, atau Hard sesuai capaian kuis modulmu. Setiap sesi memuat satu studi kasus acak dan soal yang saling berkaitan, dari pilihan ganda sampai praktik langsung.</p>
         </div>
-        <button type="button" onClick={() => setSyarat(true)} aria-haspopup="dialog" className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm font-semibold text-primary"><Trophy size={18} />Syarat akses</button>
+        <button type="button" onClick={() => setSyarat(true)} aria-haspopup="dialog" className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-white px-4 py-3 text-sm font-semibold text-primary"><Trophy size={18} />Syarat akses</button>
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <span className="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700"><Star size={18} />{capaian.bintang} Bintang</span>
-        <span className="rounded-xl bg-primary/5 px-4 py-3 text-sm font-bold text-primary">{capaian.poin} Poin Modul</span>
+        <span className="rounded-xl bg-white px-4 py-3 text-sm font-bold text-primary">{capaian.poin} Poin Modul</span>
       </div>
-      <p className="mt-3 text-xs leading-5 text-slate-500">Syarat akses memakai akumulasi capaian kuis modul. Bintang tidak dipotong. Kamu boleh langsung membuka level mana pun yang memenuhi syarat.</p>
+      <p className="mt-3 text-xs leading-5 text-white">Syarat akses memakai akumulasi capaian kuis modul. Bintang tidak dipotong. Kamu boleh langsung membuka level mana pun yang memenuhi syarat.</p>
     </header>
     <div className="grid gap-5 lg:grid-cols-3">
       {levelIds.map(level => {
@@ -65,7 +65,7 @@ export default function Kuis() {
     <p className="text-xs leading-6 text-slate-500">{user ? `${user.nama} · ${user.kelas}.` : 'Mode tamu.'} Riwayat tantangan tersimpan pada browser ini. Kasus berbeda dari pembukaan terakhir level yang sama; siswa yang berbeda masih bisa mendapat kasus yang sama.</p>
 
     <Modal buka={syarat} tutup={() => setSyarat(false)} lebar="max-w-2xl">
-      <div className="flex items-start gap-3 pr-7"><span className="rounded-xl bg-amber-50 p-3 text-amber-600"><Trophy size={23} /></span><div><h2 className="text-xl font-extrabold">Syarat Akses Kuis & Tantangan</h2><p className="mt-1 text-xs text-slate-500">Ketentuan pembukaan level studi kasus</p></div></div>
+      <div className="flex items-start gap-3 pr-7"><span className="rounded-xl bg-amber-50 p-3 text-amber-600"><Trophy size={23} /></span><div><h2 className="text-xl font-extrabold">Syarat Akses Tantangan</h2><p className="mt-1 text-xs text-slate-500">Ketentuan pembukaan level studi kasus</p></div></div>
       <p className="mt-5 text-sm leading-6 text-slate-500">Kumpulkan bintang dan akumulasi poin dari kuis modul untuk membuka tingkat kesulitan tantangan.</p>
       <div className="mt-4 space-y-3">{levelIds.map(level => {
         const info = levelInfo[level]

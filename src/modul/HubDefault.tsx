@@ -19,7 +19,7 @@ export default function HubDefault({ id }: { id: string }) {
   const detail = detailModul[id]
   const lokasi = useLocation()
 
-  // Datang dari tombol "Lanjut ke Challenge" di materi atau simulasi: langsung buka pop up challenge
+  // Datang dari tombol "Lanjut ke Kuis" di materi atau simulasi: langsung buka pop up challenge
   const dariAlur = !!(lokasi.state as { bukaChallenge?: boolean } | null)?.bukaChallenge
   const [bukaTujuan, setBukaTujuan] = useState(() => !!detail?.tujuan && !dariAlur && !sudahLihatTujuan(id))
   const [bukaChallenge, setBukaChallenge] = useState(() => dariAlur && !alasanTerkunci(id))

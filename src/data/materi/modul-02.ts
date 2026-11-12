@@ -19,7 +19,7 @@ export const modul02: ModulDetail = {
     checklist: ['Autentikasi MySQL Root via Terminal', 'Sintaks Dasar SQL: CREATE, SHOW, USE, DROP'],
   },
   fase3: {
-    judul: 'Challenge Operasi Dasar DBMS',
+    judul: 'Kuis Operasi Dasar DBMS',
     deskripsi:
       'Uji keterampilan dan logika manipulasi database melalui 5 studi kasus skenario error sintaks dan manajemen direktori database.',
     checklist: [],

@@ -19,7 +19,7 @@ export const modul05: ModulDetail = {
     checklist: ['SQL engine di browser terintegrasi', 'Preset tabel siswa, jurusan, wali_kelas'],
   },
   fase3: {
-    judul: 'Challenge Sederhana',
+    judul: 'Kuis Relasi Tabel & JOIN',
     deskripsi:
       'Uji pemahaman kueri dengan 5 studi kasus singkat untuk membuka lencana kompetensi dasar basis data relasional.',
     checklist: [],
