@@ -41,7 +41,7 @@ export const modul05: ModulDetail = {
       'Pelajari cara menggabungkan data dari beberapa tabel yang saling berelasi menggunakan JOIN, mulai dari logika himpunan sampai menulis query sendiri.',
     kd: 'KD 3.7 Relasi Tabel & JOIN',
     estimasiMenit: 20,
-    video: { youtubeId: '', durasi: '—' },
+    video: { youtubeId: 'FNaUztEDRBo', durasi: '18:34' },
     intisari: {
       judul: 'Mengapa Data Perlu Digabungkan?',
       isi: 'Setelah normalisasi, data tersebar di beberapa tabel. Identitas siswa ada di tb_siswa, nama jurusan ada di tb_jurusan. Untuk menampilkan laporan seperti "nama siswa beserta jurusannya", kamu perlu menggabungkan kedua tabel itu saat query dijalankan. Perintah untuk itu adalah JOIN. Penghubungnya adalah kolom yang sama: Foreign Key di satu tabel yang menunjuk ke Primary Key di tabel lain, misalnya id_jurusan.',

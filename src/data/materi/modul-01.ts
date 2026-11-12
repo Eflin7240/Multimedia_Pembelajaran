@@ -34,7 +34,7 @@ export const modul01: ModulDetail = {
       'Memahami pergeseran paradigma dari arsip map lemari konvensional atau spreadsheet terpisah ke sistem manajemen basis data relasional modern yang terpusat dan berintegrasi tinggi.',
     kd: 'KD 3.1 Teori & Konsep',
     estimasiMenit: 15,
-    video: { youtubeId: '', durasi: '08:45' }, // isi ID video YouTube, misalnya 'dQw4w9WgXcQ'
+    video: { youtubeId: 'DmtEBxiwzKw', durasi: '05:26' }, // isi ID video YouTube, misalnya 'dQw4w9WgXcQ'
     intisari: {
       judul: 'Mengapa Kita Memerlukan DBMS?',
       isi: 'Dalam dunia perangkat lunak, kamu mungkin terbiasa menyimpan data sederhana di file data.json atau siswa.csv. Namun saat sistem menangani jutaan transaksi seperti E-Commerce atau SIM Sekolah, sistem berkas konvensional runtuh akibat keterbatasan strukturalnya.',
