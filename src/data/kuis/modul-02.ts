@@ -4,7 +4,7 @@ export const challenge02: Challenge = {
   modulId: 'mod-02',
   judul: 'Kuis Pengenalan Tools Basis Data',
   pengantar:
-    'Jawab 10 soal tentang Laragon, MySQL, phpMyAdmin, dan perbedaan CLI dengan GUI. Setiap soal bernilai 10 poin, dan jawabanmu langsung dibahas setelah diperiksa.',
+    'Jawab 7 soal konsep tentang Laragon, MySQL, phpMyAdmin, dan perbedaan CLI dengan GUI, lalu kerjakan 3 soal praktik langsung di terminal MySQL. Setiap soal bernilai 10 poin. Soal praktik dinilai per syarat, jadi jawaban yang sebagian benar tetap mendapat poin.',
   poinPerSoal: 10,
   soal: [
     {
@@ -62,33 +62,6 @@ export const challenge02: Challenge = {
     },
     {
       jenis: 'pilihan',
-      pertanyaan: 'Perintah untuk masuk ke MySQL lewat CLI sebagai pengguna root dan meminta input password adalah...',
-      pilihan: ['mysql -u root -p', 'mysql --tutup', 'login root mysql', 'open mysql root'],
-      benar: 0,
-      pembahasan:
-        'Opsi -u menentukan nama pengguna (user), sedangkan opsi -p membuat MySQL meminta password sebelum masuk.',
-    },
-    {
-      jenis: 'pilihan',
-      pertanyaan: 'Perintah untuk menampilkan semua database yang ada di server MySQL adalah...',
-      pilihan: ['LIST DATABASE;', 'SHOW DATABASES;', 'VIEW ALL DATABASE;', 'DISPLAY DATABASE;'],
-      benar: 1,
-      pembahasan: 'SHOW DATABASES; menampilkan daftar semua database yang tersedia di server.',
-    },
-    {
-      jenis: 'pilihan',
-      pertanyaan: 'Manakah perintah yang benar untuk membuat database baru bernama db_sekolah?',
-      pilihan: [
-        'NEW DATABASE db_sekolah;',
-        'MAKE DATABASE db_sekolah;',
-        'ADD DATABASE db_sekolah;',
-        'CREATE DATABASE db_sekolah;',
-      ],
-      benar: 3,
-      pembahasan: 'Perintah standar untuk membuat database baru adalah CREATE DATABASE diikuti nama database.',
-    },
-    {
-      jenis: 'pilihan',
       pertanyaan: 'Setelah db_sekolah dibuat, perintah apa yang harus dijalankan agar tabel yang kamu buat berikutnya masuk ke database itu?',
       pilihan: ['USE db_sekolah;', 'OPEN db_sekolah;', 'GO db_sekolah;', 'SELECT db_sekolah;'],
       benar: 0,
@@ -121,6 +94,51 @@ export const challenge02: Challenge = {
       benar: 3,
       pembahasan:
         'Di CLI MySQL, perintah baru dijalankan setelah diakhiri titik koma. Tanpa itu, MySQL menganggap perintahnya belum selesai dan menunggu lanjutan.',
+    },
+    {
+      jenis: 'cli',
+      skenario:
+        'Kamu admin komputer di Koperasi Sekolah. Laragon sudah menyala, tetapi terminal belum masuk ke MySQL.',
+      pertanyaan: 'Login ke MySQL sebagai root, lalu tampilkan semua database yang ada di server.',
+      database: ['db_koperasi'],
+      aturan: [
+        { tipe: 'login', teks: 'Login ke MySQL sebagai root (mysql -u root -p)' },
+        { tipe: 'show', teks: 'Menampilkan daftar database dengan SHOW DATABASES;' },
+      ],
+      pembahasan:
+        'Login memakai mysql -u root -p. Setelah prompt berubah menjadi mysql>, perintah SHOW DATABASES; menampilkan seluruh database di server, termasuk database bawaan dan db_koperasi.',
+    },
+    {
+      jenis: 'cli',
+      skenario:
+        'Kantin sekolah butuh basis data baru. Terminal sudah login sebagai root dan siap menerima perintah SQL.',
+      pertanyaan:
+        'Buat database bernama db_kantin, aktifkan database itu, lalu tampilkan daftar database untuk memastikan db_kantin sudah ada.',
+      sudahLogin: true,
+      aturan: [
+        { tipe: 'dbAda', nama: 'db_kantin', teks: 'Database db_kantin berhasil dibuat (CREATE DATABASE)' },
+        { tipe: 'dbAktif', nama: 'db_kantin', teks: 'Database db_kantin menjadi database aktif (USE)' },
+        { tipe: 'show', teks: 'Menampilkan daftar database dengan SHOW DATABASES;' },
+      ],
+      pembahasan:
+        'CREATE DATABASE db_kantin; membuat database, USE db_kantin; memilihnya sebagai database aktif, dan SHOW DATABASES; dipakai untuk memeriksa hasilnya. Setiap perintah harus diakhiri titik koma.',
+    },
+    {
+      jenis: 'cli',
+      skenario:
+        'Server lab menyimpan db_percobaan dan db_kantin_lama. Database db_percobaan sudah tidak dipakai, sedangkan db_kantin_lama masih diperlukan. Terminal sudah login sebagai root.',
+      pertanyaan:
+        'Hapus db_percobaan, lalu buat database baru db_toko_buku dan aktifkan. Pastikan db_kantin_lama tetap ada.',
+      sudahLogin: true,
+      database: ['db_percobaan', 'db_kantin_lama'],
+      aturan: [
+        { tipe: 'dbTidakAda', nama: 'db_percobaan', teks: 'Database db_percobaan sudah dihapus (DROP DATABASE)' },
+        { tipe: 'dbAda', nama: 'db_toko_buku', teks: 'Database db_toko_buku berhasil dibuat' },
+        { tipe: 'dbAktif', nama: 'db_toko_buku', teks: 'Database db_toko_buku menjadi database aktif' },
+        { tipe: 'dbAda', nama: 'db_kantin_lama', teks: 'Database db_kantin_lama tetap ada (tidak ikut terhapus)' },
+      ],
+      pembahasan:
+        'DROP DATABASE db_percobaan; menghapus database yang tidak terpakai. CREATE DATABASE db_toko_buku; dan USE db_toko_buku; membuat dan mengaktifkan database baru. DROP bersifat permanen, jadi hapus hanya database yang dimaksud.',
     },
   ],
 }
