@@ -14,7 +14,7 @@ export const challenge05: Challenge = {
   modulId: 'mod-05',
   judul: 'Challenge SQL & Relasi Tabel (JOIN)',
   pengantar:
-    'Baca query SQL dan tentukan hasilnya, lalu pilih jawaban yang tepat. Ada 10 soal berbasis data perpustakaan sekolah, masing-masing bernilai 10 poin, dan jawabanmu langsung dibahas.',
+    'Baca query SQL dan tentukan hasilnya untuk 7 soal pilihan, lalu tulis 3 kueri sendiri di SQL editor. Semua soal berbasis data perpustakaan sekolah dan bernilai 10 poin. Soal praktik dinilai per syarat, jadi jawaban yang sebagian benar tetap mendapat poin.',
   poinPerSoal: 10,
   soal: [
     {
@@ -30,17 +30,6 @@ export const challenge05: Challenge = {
       benar: 1,
       pembahasan:
         'Nilai nis dan id_buku di tabel peminjaman merujuk ke Primary Key tabel siswa dan tabel buku. Kolom seperti ini disebut Foreign Key, dan menjadi dasar penggabungan tabel dengan JOIN.',
-    },
-    {
-      jenis: 'pilihan',
-      skenario:
-        DATA_SINGKAT +
-        '\nSELECT siswa.nama, peminjaman.id_pinjam\nFROM siswa\nINNER JOIN peminjaman ON siswa.nis = peminjaman.nis;',
-      pertanyaan: 'Berapa baris yang dihasilkan query di atas?',
-      pilihan: ['3 baris', '4 baris', '5 baris', '6 baris'],
-      benar: 2,
-      pembahasan:
-        'INNER JOIN hanya mengambil pasangan yang cocok. Ada 5 baris peminjaman dan semuanya punya siswa yang sesuai. Rina tidak pernah meminjam, jadi ia tidak muncul.',
     },
     {
       jenis: 'pilihan',
@@ -73,22 +62,6 @@ export const challenge05: Challenge = {
     },
     {
       jenis: 'pilihan',
-      skenario:
-        DATA_SINGKAT +
-        '\nSELECT buku.judul\nFROM buku\nLEFT JOIN peminjaman ON buku.id_buku = peminjaman.id_buku\nWHERE peminjaman.id_pinjam IS NULL;',
-      pertanyaan: 'Apa hasil query di atas?',
-      pilihan: [
-        'Dasar-Dasar Basis Data',
-        'Belajar SQL untuk Pemula',
-        'Pemrograman Web Dasar',
-        'Jaringan Komputer',
-      ],
-      benar: 3,
-      pembahasan:
-        'Query ini mencari buku tanpa pasangan di tabel peminjaman. Buku 1, 2, dan 3 pernah dipinjam, sedangkan buku 4 (Jaringan Komputer) belum pernah, sehingga id_pinjam-nya NULL.',
-    },
-    {
-      jenis: 'pilihan',
       pertanyaan:
         'Kamu ingin menghubungkan tabel peminjaman dengan tabel buku. Kondisi ON yang benar adalah...',
       pilihan: [
@@ -100,17 +73,6 @@ export const challenge05: Challenge = {
       benar: 0,
       pembahasan:
         'Kondisi ON harus mempertemukan Foreign Key dengan Primary Key yang dirujuknya. Foreign Key id_buku di peminjaman merujuk ke Primary Key id_buku di buku.',
-    },
-    {
-      jenis: 'pilihan',
-      skenario:
-        DATA_SINGKAT +
-        '\nSELECT siswa.nama, buku.judul\nFROM peminjaman\nJOIN siswa ON peminjaman.nis = siswa.nis\nJOIN buku ON peminjaman.id_buku = buku.id_buku\nWHERE peminjaman.tgl_kembali IS NULL;',
-      pertanyaan: 'Query di atas menampilkan buku yang belum dikembalikan. Berapa baris hasilnya?',
-      pilihan: ['1 baris', '2 baris', '3 baris', '5 baris'],
-      benar: 2,
-      pembahasan:
-        'Peminjaman dengan tgl_kembali NULL adalah nomor 2, 4, dan 5. Ketiganya cocok dengan siswa dan buku, jadi hasilnya 3 baris.',
     },
     {
       jenis: 'pilihan',
@@ -160,6 +122,44 @@ export const challenge05: Challenge = {
       benar: 1,
       pembahasan:
         'Kolom nis ada di tabel siswa dan peminjaman, sehingga SQL tidak tahu mana yang dimaksud. Tulis nama tabel di depannya (siswa.nis) agar jelas.',
+    },
+    {
+      jenis: 'sql',
+      skenario: 'Pustakawan ingin laporan siapa saja yang meminjam buku, lengkap dengan judul bukunya.',
+      pertanyaan:
+        'Tampilkan nama siswa dan judul buku untuk setiap peminjaman. Gabungkan tabel peminjaman, siswa, dan buku dengan JOIN.',
+      petunjuk: 'peminjaman.nis berpasangan dengan siswa.nis, dan peminjaman.id_buku berpasangan dengan buku.id_buku.',
+      awal: 'SELECT siswa.nama, buku.judul\nFROM peminjaman',
+      jawaban:
+        'SELECT siswa.nama, buku.judul FROM peminjaman JOIN siswa ON peminjaman.nis = siswa.nis JOIN buku ON peminjaman.id_buku = buku.id_buku',
+      wajib: [{ pola: /\bjoin\b/i, teks: 'Memakai JOIN untuk menggabungkan tabel' }],
+      pembahasan:
+        'Tabel peminjaman menyimpan nis dan id_buku sebagai Foreign Key. Dua JOIN mempertemukannya dengan Primary Key tabel siswa dan buku, sehingga setiap peminjaman tampil bersama nama siswa dan judul bukunya.',
+    },
+    {
+      jenis: 'sql',
+      skenario: 'Pustakawan ingin menagih buku yang belum dikembalikan. Peminjaman yang belum kembali ditandai tgl_kembali bernilai NULL.',
+      pertanyaan: 'Tampilkan nama siswa dan judul buku yang belum dikembalikan.',
+      petunjuk: 'Nilai kosong (NULL) punya cara pemeriksaan khusus yang berbeda dari membandingkan nilai biasa.',
+      awal: 'SELECT siswa.nama, buku.judul\nFROM peminjaman',
+      jawaban:
+        'SELECT siswa.nama, buku.judul FROM peminjaman JOIN siswa ON peminjaman.nis = siswa.nis JOIN buku ON peminjaman.id_buku = buku.id_buku WHERE peminjaman.tgl_kembali IS NULL',
+      wajib: [{ pola: /is\s+null/i, teks: 'Memakai IS NULL untuk menyaring tgl_kembali yang kosong' }],
+      pembahasan:
+        'JOIN menggabungkan tiga tabel, lalu WHERE peminjaman.tgl_kembali IS NULL menyaring peminjaman yang belum kembali. Pada data contoh hasilnya Ahmad, Fahril, dan Elsa.',
+    },
+    {
+      jenis: 'sql',
+      skenario: 'Pustakawan ingin tahu buku mana yang belum pernah dipinjam siapa pun.',
+      pertanyaan: 'Tampilkan judul buku yang belum pernah dipinjam sama sekali. Gunakan LEFT JOIN.',
+      petunjuk:
+        'LEFT JOIN dari buku ke peminjaman mempertahankan semua buku. Buku tanpa pasangan di peminjaman punya id_pinjam NULL.',
+      awal: 'SELECT buku.judul\nFROM buku',
+      jawaban:
+        'SELECT buku.judul FROM buku LEFT JOIN peminjaman ON buku.id_buku = peminjaman.id_buku WHERE peminjaman.id_pinjam IS NULL',
+      wajib: [{ pola: /left\s+join/i, teks: 'Memakai LEFT JOIN seperti perintah soal' }],
+      pembahasan:
+        'LEFT JOIN mempertahankan seluruh baris tabel buku. Buku yang tidak punya pasangan pada tabel peminjaman berisi NULL di kolom peminjaman, sehingga WHERE peminjaman.id_pinjam IS NULL hanya menyisakan buku yang belum pernah dipinjam, yaitu Jaringan Komputer.',
     },
   ],
 }

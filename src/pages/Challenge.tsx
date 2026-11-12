@@ -3,6 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, RotateCcw, Trophy, XCircle } from 'lucide-react'
 import Bintang from '../components/Bintang'
 import ErdCanvas, { type ErdAwal } from '../components/ErdCanvas'
+import SoalCliKartu from '../components/SoalCliKartu'
+import SoalNormalisasiKartu from '../components/SoalNormalisasiKartu'
+import SoalSqlKartu from '../components/SoalSqlKartu'
 import { daftarModul } from '../data/modul'
 import { detailModul } from '../data/materi'
 import { daftarChallenge } from '../data/kuis/index'
@@ -39,6 +42,13 @@ type KanvasProps = { indeks: number; awal?: ErdAwal; simpan: (i: number, e: Erd)
 function KanvasSoal({ indeks, awal, simpan }: KanvasProps) {
   const onChange = useCallback((e: Erd) => simpan(indeks, e), [simpan, indeks])
   return <ErdCanvas awal={awal} onChange={onChange} tinggi={480} />
+}
+
+const labelJenis = {
+  erd: 'Rancang ERD',
+  cli: 'Praktik Terminal',
+  sql: 'Praktik SQL',
+  normalisasi: 'Praktik Normalisasi',
 }
 
 const lompat = (id: string) =>
@@ -108,7 +118,7 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
   const bintang = hitungBintang(skor)
   const lulus = skor >= kkm
   const target = AMBANG_BINTANG.find((a) => a.bintang === bintang + 1)
-  const lebar = soal.some((s) => s.jenis === 'erd') ? 'max-w-4xl' : 'max-w-3xl'
+  const lebar = soal.some((s) => s.jenis !== 'pilihan') ? 'max-w-4xl' : 'max-w-3xl'
 
   // Simpan hasil satu soal. Kalau ini soal terakhir yang dijawab, skor akhir langsung disimpan.
   const catat = (i: number, baru: Catatan) => {
@@ -140,6 +150,13 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
       poin: syarat.length ? Math.round((poinPerSoal * terpenuhi) / syarat.length) : 0,
       syarat,
     })
+  }
+
+  // Soal praktik (terminal, SQL, normalisasi): poin diberikan sebagian sesuai syarat yang terpenuhi
+  const kirimPraktik = (i: number, syarat: Syarat[]) => {
+    if (soal[i].jenis === 'pilihan' || soal[i].jenis === 'erd' || catatan[i]) return
+    const terpenuhi = syarat.filter((x) => x.ok).length
+    catat(i, { poin: syarat.length ? Math.round((poinPerSoal * terpenuhi) / syarat.length) : 0, syarat })
   }
 
   const ulang = () => {
@@ -234,9 +251,9 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
             <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
               <span className="flex items-center gap-2 font-semibold">
                 Soal {i + 1}
-                {s.jenis === 'erd' && (
+                {s.jenis !== 'pilihan' && (
                   <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                    Rancang ERD
+                    {labelJenis[s.jenis]}
                   </span>
                 )}
               </span>
@@ -279,6 +296,12 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
                   )
                 })}
               </div>
+            ) : s.jenis === 'cli' ? (
+              <SoalCliKartu key={`${percobaan}-${i}`} soal={s} terkunci={!!k} onKirim={(syarat) => kirimPraktik(i, syarat)} />
+            ) : s.jenis === 'sql' ? (
+              <SoalSqlKartu key={`${percobaan}-${i}`} soal={s} terkunci={!!k} onKirim={(syarat) => kirimPraktik(i, syarat)} />
+            ) : s.jenis === 'normalisasi' ? (
+              <SoalNormalisasiKartu key={`${percobaan}-${i}`} soal={s} terkunci={!!k} onKirim={(syarat) => kirimPraktik(i, syarat)} />
             ) : (
               <div className="mt-4">
                 {/* Setelah diperiksa, kanvas dikunci supaya jawaban tidak berubah */}
@@ -311,7 +334,7 @@ function Runner({ modulId, judulModul, kkm, challenge }: RunnerProps) {
               </div>
             )}
 
-            {k && s.jenis === 'erd' && (
+            {k && s.jenis !== 'pilihan' && (
               <div className="mt-4 rounded-xl bg-slate-50 p-4 text-sm">
                 <p className="font-semibold">
                   +{k.poin} poin • {(k.syarat ?? []).filter((x) => x.ok).length}/{(k.syarat ?? []).length} syarat
