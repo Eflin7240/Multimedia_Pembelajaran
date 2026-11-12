@@ -70,9 +70,9 @@ export const daftarModul: Modul[] = [
   },
   {
     id: 'eval-kasus',
-    kode: 'EVAL-KASUS',
-    label: 'Ujian Praktik',
-    judul: 'Kuis & Studi Kasus Mandiri',
+    kode: 'EVALUASI-KASUS',
+    label: 'Ujian',
+    judul: 'Tantangan Studi Kasus Mandiri',
     deskripsi:
       'Uji kompetensi terintegrasi sistem POS toko ritel: skema database, foreign key constraints, dan query SQL.',
     gambar: 'sertifikat',

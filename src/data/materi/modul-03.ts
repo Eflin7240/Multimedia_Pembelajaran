@@ -19,7 +19,7 @@ export const modul03: ModulDetail = {
     checklist: ['Derajat Kardinalitas & Modalitas Relasi', 'Transformasi ERD M:N menjadi Tabel Penghubung (Junction Table)'],
   },
   fase3: {
-    judul: 'Challenge Merancang ERD Sistem',
+    judul: 'Kuis Merancang ERD Sistem',
     deskripsi:
       'Uji pemahaman konsep ERD melalui 7 soal pilihan ganda dan 3 soal merancang ERD langsung di kanvas.',
     checklist: [],

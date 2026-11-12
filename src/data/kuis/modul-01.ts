@@ -2,7 +2,7 @@ import type { Challenge } from './types'
 
 export const challenge01: Challenge = {
   modulId: 'mod-01',
-  judul: 'Challenge Pemahaman Dasar',
+  judul: 'Kuis Pemahaman Dasar',
   pengantar:
     'Jawab 10 soal berbasis skenario nyata di sekolah dan minimarket. Setiap soal bernilai 10 poin, dan jawabanmu langsung dibahas setelah diperiksa.',
   poinPerSoal: 10,

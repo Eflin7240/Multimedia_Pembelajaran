@@ -12,7 +12,7 @@ const DATA_SINGKAT = 'Gunakan tabel siswa, buku, dan peminjaman pada Soal 1.'
 
 export const challenge05: Challenge = {
   modulId: 'mod-05',
-  judul: 'Challenge SQL & Relasi Tabel (JOIN)',
+  judul: 'Kuis SQL & Relasi Tabel (JOIN)',
   pengantar:
     'Baca query SQL dan tentukan hasilnya, lalu pilih jawaban yang tepat. Ada 10 soal berbasis data perpustakaan sekolah, masing-masing bernilai 10 poin, dan jawabanmu langsung dibahas.',
   poinPerSoal: 10,

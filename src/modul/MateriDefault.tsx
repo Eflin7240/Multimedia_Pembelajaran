@@ -22,7 +22,7 @@ import { tandaiSelesai } from '../lib/progres'
 
    Tombol di akhir halaman:
    - modul yang punya fase2 (simulasi)  -> "Lanjut ke Simulasi"
-   - modul tanpa fase2                  -> "Lanjut ke Challenge"
+   - modul tanpa fase2                  -> "Lanjut ke Kuis"
    ============================================================ */
 
 type Gaya = { label: string; lead: string; angka: string; interaktif?: ReactElement }
@@ -507,7 +507,7 @@ function Isi({ id, detail, materi }: IsiProps) {
                 onClick={lanjut}
                 className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
               >
-                {fase2 ? 'Lanjut ke Simulasi' : 'Lanjut ke Challenge'} <ArrowRight size={16} />
+                {fase2 ? 'Lanjut ke Simulasi' : 'Lanjut ke Kuis'} <ArrowRight size={16} />
               </button>
               <Link
                 to={`/modul/${id}`}

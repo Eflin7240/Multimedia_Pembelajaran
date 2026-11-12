@@ -59,7 +59,7 @@ export default function SimulasiShell({
           onClick={lanjut}
           className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
         >
-          Lanjut ke Challenge <ArrowRight size={16} />
+          Lanjut ke Kuis <ArrowRight size={16} />
         </button>
       </div>
     </div>

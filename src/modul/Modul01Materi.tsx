@@ -397,7 +397,7 @@ function Isi({ judulModul, materi }: { judulModul: string; materi: Materi }) {
                 onClick={selesai}
                 className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
               >
-                Lanjut ke Challenge <ArrowRight size={16} />
+                Lanjut ke Kuis <ArrowRight size={16} />
               </button>
               <Link
                 to={`/modul/${ID}`}

@@ -16,7 +16,7 @@ export const modul04: ModulDetail = {
     checklist: ['UNF → 1NF → 2NF → 3NF', 'Relasi siswa, mapel, guru, dan pendaftaran'],
   },
   fase3: {
-    judul: 'Challenge Normalisasi Data',
+    judul: 'Kuis Normalisasi Data',
     deskripsi: 'Gunakan aturan normalisasi untuk menganalisis kasus lain, seperti peminjaman alat praktik.',
     checklist: ['Identifikasi anomali', 'Tentukan bentuk normal dan alasan pemisahan'],
     tingkat: 'Tingkat Menengah (L2)',

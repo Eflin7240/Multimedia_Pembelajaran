@@ -4,7 +4,6 @@ import {
   BookOpen,
   Clock,
   Cpu,
-  Download,
   SquareTerminal,
   Star,
   FileText,
@@ -37,11 +36,6 @@ export default function Beranda() {
           <h1 className="mt-3 text-3xl font-extrabold sm:text-4xl">
             Pembelajaran Interaktif Basis Data
           </h1>
-          <p className="mt-3 text-slate-600">
-            Materi dan praktik interaktif Basis Data SMK Kelas XI. Kuasai fondasi relasional,
-            normalisasi data, perancangan ERD, hingga manipulasi query SQL praktis langsung di
-            browser.
-          </p>
         </div>
 
         <div className="flex items-center gap-3 rounded-2xl bg-primary/5 p-4 lg:min-w-64">
@@ -56,11 +50,11 @@ export default function Beranda() {
       </section>
 
       {/* Statistik */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 bg-blue-600 p-6 rounded-2xl shadow-sm">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 bg-blue-600 p-3 rounded-2xl shadow-sm">
         <StatCard ikon={BookOpen} label="Total Modul" nilai={`${jumlahModul} Modul Teori & Praktik`} />
         <StatCard ikon={BadgeCheck} label="Evaluasi Akhir" nilai="3 Level Challenge Studi Kasus" />
         <StatCard ikon={Clock} label="Alokasi Waktu" nilai={`${totalJP} Jam Pelajaran (JP)`} />
-        <StatCard ikon={Star} label="KKM Kelulusan" nilai="≥ 75.00 Poin" />
+        <StatCard ikon={Star} label="KKM Kelulusan" nilai="≥ 75 / 375 Poin" />
       </section>
 
       {/* Daftar modul */}
@@ -87,9 +81,9 @@ export default function Beranda() {
       {/* Section Tombol Pemicu Modal/Popup (4 Tombol) */}
       <section className="rounded-2xl border border-slate-200 bg-blue-600 p-5 shadow-sm sm:p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-bold text-slate-100">Dokumen & Panduan Praktikum</h3>
+          <h3 className="text-lg font-bold text-slate-100">Panduan Praktikum</h3>
           <p className="text-xs text-slate-200">
-            Pilih dokumen di bawah ini untuk melihat pratinjau detail serta mengunduh berkas PDF.
+            Tekan button di bawah ini untuk melihat pratinjau detail terkait informasi penilaian dan praktikum.
           </p>
         </div>
 
@@ -99,7 +93,7 @@ export default function Beranda() {
             className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-primary hover:text-primary hover:shadow"
           >
             <HelpCircle size={18} className="text-primary" />
-            Silabus & Panduan
+            Panduan
           </button>
 
           <button
@@ -140,7 +134,7 @@ export default function Beranda() {
               <X size={20} />
             </button>
 
-            {/* POPUP 1: SILABUS & PANDUAN */}
+            {/* POPUP 1: PANDUAN */}
             {activeModal === 'panduan' && (
               <div className="space-y-5">
                 <div className="flex items-center gap-3">
@@ -148,7 +142,7 @@ export default function Beranda() {
                     <HelpCircle size={20} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900">Silabus & Panduan Siswa</h3>
+                    <h3 className="text-xl font-bold text-slate-900">Panduan Siswa</h3>
                     <p className="text-xs text-slate-500">Mata Pelajaran Basis Data Kelas XI</p>
                   </div>
                 </div>
@@ -169,14 +163,6 @@ export default function Beranda() {
                   >
                     Tutup
                   </button>
-                  <a
-                    href="/dokumen/silabus-dan-panduan.pdf"
-                    download
-                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow hover:bg-primary/90"
-                  >
-                    <Download size={16} />
-                    Unduh PDF
-                  </a>
                 </div>
               </div>
             )}
@@ -214,14 +200,6 @@ export default function Beranda() {
                   >
                     Tutup
                   </button>
-                  <a
-                    href="/dokumen/template-laporan.pdf"
-                    download
-                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow hover:bg-primary/90"
-                  >
-                    <Download size={16} />
-                    Unduh Template (.PDF)
-                  </a>
                 </div>
               </div>
             )}
@@ -243,19 +221,20 @@ export default function Beranda() {
                   <div className="grid gap-3 sm:grid-cols-3">
                     <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
                       <p className="text-xs font-semibold text-slate-500">TUGAS MODUL</p>
-                      <p className="mt-1 text-2xl font-extrabold text-primary">30%</p>
+                      <p className="mt-3.5 text-3xl font-extrabold text-primary">30%</p>
                     </div>
                     <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
                       <p className="text-xs font-semibold text-slate-500">PRAKTIKUM LAB</p>
-                      <p className="mt-1 text-2xl font-extrabold text-primary">40%</p>
+                      <p className="mt-1 text-2xl font-extrabold text-primary">30%</p>
+                      <p className="mt-1.5 text-[10px] italic text-slate-500">Dinilai Manual Oleh Guru</p>
                     </div>
                     <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
                       <p className="text-xs font-semibold text-slate-500">EVALUASI AKHIR</p>
-                      <p className="mt-1 text-2xl font-extrabold text-primary">30%</p>
+                      <p className="mt-3.5 text-3xl font-extrabold text-primary">40%</p>
                     </div>
                   </div>
                   <p className="text-xs text-slate-500 mt-2">
-                    * Catatan: Nilai ketuntasan minimal (KKM) untuk mata pelajaran ini adalah <strong>75.00 Poin</strong>.
+                    * Catatan: Nilai ketuntasan minimal (KKM) untuk mata pelajaran ini adalah <strong>75 / 375 Poin</strong>.
                   </p>
                 </div>
 
@@ -266,14 +245,6 @@ export default function Beranda() {
                   >
                     Tutup
                   </button>
-                  <a
-                    href="/dokumen/rubrik-penilaian.pdf"
-                    download
-                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow hover:bg-primary/90"
-                  >
-                    <Download size={16} />
-                    Unduh Penilaian (.PDF)
-                  </a>
                 </div>
               </div>
             )}
@@ -286,7 +257,7 @@ export default function Beranda() {
                     <Trophy size={20} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900">Syarat Akses Kuis & Tantangan</h3>
+                    <h3 className="text-xl font-bold text-slate-900">Syarat Akses Tantangan</h3>
                     <p className="text-xs text-slate-500">Ketentuan Pembukaan Level Kuis Studi Kasus</p>
                   </div>
                 </div>
@@ -363,14 +334,6 @@ export default function Beranda() {
                   >
                     Tutup
                   </button>
-                  <a
-                    href="/dokumen/panduan-akses-tantangan.pdf"
-                    download
-                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow hover:bg-primary/90"
-                  >
-                    <Download size={16} />
-                    Unduh Panduan Tantangan (.PDF)
-                  </a>
                 </div>
               </div>
             )}

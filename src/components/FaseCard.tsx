@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Circle, Lock } from 'lucide-react'
+import { ArrowRight, Lock } from 'lucide-react'
 import Ilustrasi, { type NamaIlustrasi } from './Ilustrasi'
 
 type Props = {
@@ -24,7 +24,7 @@ type Props = {
 }
 
 export default function FaseCard({
-  tag, kode, judul, deskripsi, checklist, tombol, to, aksi, gambar, selesai, sorot, terkunci, alasanKunci, info, className = '', tombolWarna = '', tagWarna = '',
+  tag, kode, judul, deskripsi, checklist, tombol, to, aksi, gambar, sorot, terkunci, alasanKunci, info, className = '', tombolWarna = '', tagWarna = '',
 }: Props) {
   const kelasTombol = `inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition ${
     sorot ? 'bg-primary text-white hover:bg-blue-700' 
@@ -58,19 +58,17 @@ export default function FaseCard({
       <p className="mt-2 text-sm text-slate-600">{deskripsi}</p>
 
       {checklist.length > 0 && (
-        <ul className="mt-3 space-y-1.5 rounded-xl bg-slate-50 p-3 text-sm">
-          {checklist.map((c) => (
-            <li key={c} className="flex items-start gap-2">
-              {selesai ? (
-                <Check size={16} className="mt-0.5 shrink-0 text-success" />
-              ) : (
-                <Circle size={16} className="mt-0.5 shrink-0 text-slate-400" />
-              )}
-              {c}
-            </li>
-          ))}
-        </ul>
-      )}
+              <div className="mt-3 space-y-2 rounded-xl bg-slate-50 p-3 text-sm">
+                {checklist.map((c) => (
+                  <div key={c} className="flex items-center gap-2.5">
+                    <svg className="w-4 h-4 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-slate-700 font-medium">{c}</span>
+                  </div>
+                ))}
+              </div>
+            )}
 
       {info}
 

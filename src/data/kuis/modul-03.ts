@@ -17,7 +17,7 @@ const NILAI = 'nilai|rapor|penilaian'
 
 export const challenge03: Challenge = {
   modulId: 'mod-03',
-  judul: 'Challenge Perancangan ERD',
+  judul: 'Kuis Perancangan ERD',
   pengantar:
     'Jawab 7 soal konsep dan rancang 3 ERD langsung di kanvas. Setiap soal bernilai 10 poin. Soal ERD dinilai per syarat, jadi rancangan yang sebagian benar tetap mendapat poin.',
   poinPerSoal: 10,

@@ -2,7 +2,7 @@ import type { Challenge } from './types'
 
 export const challenge02: Challenge = {
   modulId: 'mod-02',
-  judul: 'Challenge Pengenalan Tools Basis Data',
+  judul: 'Kuis Pengenalan Tools Basis Data',
   pengantar:
     'Jawab 10 soal tentang Laragon, MySQL, phpMyAdmin, dan perbedaan CLI dengan GUI. Setiap soal bernilai 10 poin, dan jawabanmu langsung dibahas setelah diperiksa.',
   poinPerSoal: 10,

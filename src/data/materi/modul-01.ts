@@ -12,7 +12,7 @@ export const modul01: ModulDetail = {
     checklist: ['Redundansi data & anomali berkas', 'Definisi Data, Basis Data, dan Metadata'],
   },
   fase3: {
-    judul: 'Challenge Pemahaman Dasar',
+    judul: 'Kuis Pemahaman Dasar',
     deskripsi:
       'Uji logika dan pemahaman teori dasar basis data melalui 5 studi kasus skenario nyata sekolah dan minimarket.',
     checklist: [],
