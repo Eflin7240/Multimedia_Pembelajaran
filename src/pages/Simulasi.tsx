@@ -2,11 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import {
   ArrowRight,
   CheckCircle2,
-  Code2,
-  Database,
-  Layers,
   Sparkles,
-  Terminal,
 } from 'lucide-react'
 import { daftarSimulasi } from '../simulasi'
 
@@ -23,8 +19,7 @@ const daftarKatalogSimulasi = [
       'Autentikasi MySQL Root via Terminal CLI',
       'Sintaks Dasar SQL: CREATE, SHOW, USE, DROP',
     ],
-    icon: Terminal,
-    warnaBgIcon: 'bg-blue-50 text-blue-600 border-blue-200',
+    gambar: '/pict/simulasimod2pict.jpg',
     warnaBorder: 'hover:border-blue-500',
   },
   {
@@ -39,8 +34,7 @@ const daftarKatalogSimulasi = [
       'Derajat Kardinalitas & Modalitas Relasi',
       'Transformasi ERD N:M menjadi Tabel Penghubung (Junction Table)',
     ],
-    icon: Layers,
-    warnaBgIcon: 'bg-indigo-50 text-indigo-600 border-indigo-200',
+    gambar: '/pict/simulasimod3pict.jpg',
     warnaBorder: 'hover:border-indigo-500',
   },
   {
@@ -55,8 +49,7 @@ const daftarKatalogSimulasi = [
       'Transformasi Bertahap 0NF → 1NF → 2NF → 3NF',
       'Manipulasi baris data & penetapan Primary Key mandiri',
     ],
-    icon: Database,
-    warnaBgIcon: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+    gambar: '/pict/simulasimod4pict.jpg',
     warnaBorder: 'hover:border-emerald-500',
   },
   {
@@ -71,8 +64,7 @@ const daftarKatalogSimulasi = [
       'SQL Engine di Browser Terintegrasi (WebAssembly)',
       'Preset tabel siswa, jurusan, dan wali_kelas',
     ],
-    icon: Code2,
-    warnaBgIcon: 'bg-violet-50 text-violet-600 border-violet-200',
+    gambar: '/pict/simulasimod5pict.jpg',
     warnaBorder: 'hover:border-violet-500',
   },
 ]
@@ -130,7 +122,6 @@ export default function Simulasi() {
         {/* Grid Card Simulasi Modul 02 - 05 */}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-2">
           {daftarKatalogSimulasi.map((item) => {
-            const IconComponent = item.icon
             return (
               <div
                 key={item.id}
@@ -152,13 +143,13 @@ export default function Simulasi() {
                     <span className="font-mono">{item.kategori}</span>
                   </div>
 
-                  {/* Icon Preview Box */}
-                  <div className="my-5 flex h-36 w-full items-center justify-center rounded-2xl bg-slate-50 border border-slate-100">
-                    <div
-                      className={`flex h-16 w-16 items-center justify-center rounded-2xl border ${item.warnaBgIcon} shadow-sm`}
-                    >
-                      <IconComponent size={32} />
-                    </div>
+                  {/* Kotak Gambar Preview 16:9 Utuh */}
+                  <div className="my-5 aspect-video w-full overflow-hidden rounded-2xl bg-white border border-slate-100 flex items-center justify-center p-2 shadow-inner">
+                    <img
+                      src={item.gambar}
+                      alt={item.judul}
+                      className="h-full w-full object-contain"
+                    />
                   </div>
 
                   {/* Judul & Deskripsi */}
